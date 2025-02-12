@@ -92,6 +92,9 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(2)
 # Sprawdzenie wartości po konwersji
 st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
 
+# Sprawdzenie wartości po konwersji
+st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
+
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%Y-%m-%d')
 
