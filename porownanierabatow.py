@@ -78,11 +78,13 @@ df.loc[df["Nazwa Promocji"].str.contains("RPM_HIT|RPM HIT", na=False, regex=True
 
 # Kolumna Rabat P+
 # Oczyszczanie kolumny 'Rabat Promocyjny'
-df = df[df["Rabat Promocyjny"].notna()]
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
 df = df[df["Rabat Promocyjny"] != 0]
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.replace(',', '.')  # Zastąp przecinki kropkami, jeśli są
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()  # Usuwanie białych znaków
-df['Rabat Promocyjny'] = df['Rabat Promocyjny']/(-100)
+# Konwersja na typ numeryczny (float), w przypadku problemów, zamienia wartości na NaN
+df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'])
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / -100
 
 # Sprawdzenie wartości po konwersji
 st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
