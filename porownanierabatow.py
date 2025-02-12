@@ -84,7 +84,7 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.replace(',', '.')  # Zastąp
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()  # Usuwanie białych znaków
 # Konwersja na typ numeryczny (float), w przypadku problemów, zamienia wartości na NaN
 df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'])
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / -1
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs()
 # Zaokrąglenie do 2 miejsc po przecinku (opcjonalnie)
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(2)
 # Opcjonalnie, jeśli chcesz dodać znak '%' do wyników, jako tekst:
