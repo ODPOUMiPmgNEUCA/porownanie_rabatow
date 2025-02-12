@@ -85,7 +85,7 @@ df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'])
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs()
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 # Zaokrąglenie do 2 miejsc po przecinku (opcjonalnie)
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(2)
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
 
 
 
