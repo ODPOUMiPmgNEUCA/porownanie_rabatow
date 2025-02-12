@@ -99,9 +99,20 @@ today = datetime.datetime.today().strftime('%Y-%m-%d')
 
 # Tworzenie pliku Excel w pamięci
 excel_file1 = io.BytesIO()
+
 with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisanie DataFrame do arkusza o nazwie "dane"
     df.to_excel(writer, index=False, sheet_name='dane')
+
+    # Pobranie obiektu workbook i worksheet
+    workbook = writer.book
+    worksheet = writer.sheets["dane"]
+
+    # Definiowanie formatu liczbowego z przecinkiem dziesiętnym
+    format_decimal = workbook.add_format({"num_format": "0,00"})  # Dwa miejsca po przecinku
+
+    # Ustalenie szerokości kolumn i zastosowanie formatu (dla całego zakresu kolumn)
+    worksheet.set_column("B:Z", None, format_decimal)  # Dostosuj zakres kolumn do swojego pliku
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
