@@ -110,7 +110,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet = writer.sheets["dane"]
 
     # Definiowanie formatu liczbowego z przecinkiem dziesiętnym
-    format_percent = workbook.add_format({"num_format": "0,00})  # Dwa miejsca po przecinku
+    format_percent = workbook.add_format({"num_format": "0,00"})  # Dwa miejsca po przecinku
 
     # Ustalenie szerokości kolumn i zastosowanie formatu (dla całego zakresu kolumn)
     worksheet.set_column("B:Z", None, format_percent)  # Dostosuj zakres kolumn do swojego pliku
