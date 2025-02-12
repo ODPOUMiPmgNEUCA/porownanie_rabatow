@@ -88,17 +88,14 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 df['Rabat Promocyjny1'] = pd.to_numeric(df['Rabat Promocyjny'], errors='coerce')
 df['Rabat P+'] = np.where(df['Rabat Promocyjny1'].isna(), 0, df['Rabat Promocyjny1'] / -100)
 
-
-
-
+# Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-# Tworzenie pliku Excel
+# Tworzenie pliku Excel w pamięci
 excel_file1 = io.BytesIO()
 with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
-    # Zapisanie IPRA_WHA_m do arkusza o nazwie "IPRA WHA"
+    # Zapisanie DataFrame do arkusza o nazwie "dane"
     df.to_excel(writer, index=False, sheet_name='dane')
-
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
@@ -110,7 +107,6 @@ st.download_button(
     file_name=f'Porównanie_rabatów_{today}.xlsx',
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
-
 
 
 
