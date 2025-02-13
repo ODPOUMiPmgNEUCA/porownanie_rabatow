@@ -54,7 +54,7 @@ st.markdown("""
 st.image("potrzebne_fotki/zip.png")
 
 st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3. Rozpakuj pobrany folder .zip, klikając na niego prawym przyciskiem myszy i wybierając opcję **Wyodrębnij wszystkie**.""", unsafe_allow_html=True)
-st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.4. Teraz powinien pojawić się folder bez suwaka - jak na obrazku poniżej""", unsafe_allow_html=True)
+st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.4. Teraz powinien otworzyć się rozpakowany folder z dwoma plikami wewnątrz - jak na obrazku poniżej.""", unsafe_allow_html=True)
 
 
 
