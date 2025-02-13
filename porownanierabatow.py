@@ -50,7 +50,7 @@ st.markdown("""
 """)
 
 # Ustawienie dwóch kolumn
-col1, col2 = st.columns([4, 1])  # Proporcje szerokości kolumn
+col1, col2 = st.columns([5, 1])  # Proporcje szerokości kolumn
 
 with col1:
     st.markdown("2.2. Folder pobierze się w formacie **.zip** (jak na rysunku obok - zip - ten zasuwak na folderze).")
