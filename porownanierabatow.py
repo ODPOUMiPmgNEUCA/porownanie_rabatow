@@ -293,7 +293,7 @@ st.markdown("""
 ### 🔹 Legenda kolorów arkuszy:
 - 🔵 **Niebieski** – najważniejsze dane z pliku RaportPromocyjny.
 - 🟢 **Zielony** – porównanie rabatów w zależności od rodzaju promocji.
-- 🟡 **Pomarańczowe** – arkusze przedstawiające listę produktów, które w jednym programie są w promocji, a w innym nie.
+- 🟠 **Pomarańczowe** – arkusze przedstawiające listę produktów, które w jednym programie są w promocji, a w innym nie.
 
 
 ### 📂 Opis arkuszy:
