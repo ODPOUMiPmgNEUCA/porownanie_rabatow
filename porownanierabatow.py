@@ -267,3 +267,5 @@ st.download_button(
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
 
+st.write(f"Zakres formatowania: {rabat_range}")
+
