@@ -148,7 +148,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
 
     # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
-    max_length = df_filtered['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
     worksheet2.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
     worksheet3.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
 
