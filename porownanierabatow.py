@@ -91,10 +91,10 @@ df = df[df["Rabat Promocyjny"] != 0]
 
 
 # Sprawdzenie wartości po konwersji
-st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
+# st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
 
 # Sprawdzenie wartości po konwersji
-st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
+# st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
 df1 = df.copy()
 # Usunięcie spacji i zamiana pustych stringów na NaN
@@ -117,7 +117,7 @@ pivot_table1 = pivot_table.reset_index()
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table1 = pivot_table1[selected_columns]
 
-pivot_table1
+# pivot_table1
 
 
 # Tylko IPRA, EO i ŚZ/P
@@ -250,5 +250,5 @@ st.download_button(
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
 
-st.write(f"Zakres formatowania: {rabat_range}")
+# st.write(f"Zakres formatowania: {rabat_range}")
 
