@@ -40,10 +40,10 @@ div[class*="stSelectbox"] label {
 </style>
 """
 
-st.title("Automat PORÓWNANIE RABATÓW - Instrukcja obsługi")
+st.title("Automat PORÓWNANIE RABATÓW")
 
 st.markdown("""
-### Jak korzystać z aplikacji?
+### Jak korzystać z aplikacji - Instrukcja obsługi?
 1. Nie przejmuj się, że strona wyświetla błąd: **TypeError**. Będzie on widoczny, dopóki nie wrzucisz pliku z Raportem promocyjnym, który codziennie dostajesz na maila :)
 2. Jak go wrzucić?  
     2.1. Pobierz folder z maila.  
