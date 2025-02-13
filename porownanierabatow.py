@@ -48,9 +48,8 @@ st.markdown("""
 2. Jak go wrzucić?  
     2.1. Pobierz folder z maila.  
     2.2. Folder pobierze się w formacie **.zip**.  
-    2.3. 
-
 """)
+st.image('potrzbne_fotki/zip.png')
 
 
 df = st.file_uploader(
