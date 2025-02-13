@@ -100,9 +100,6 @@ df1 = df.copy()
 # Usunięcie spacji i zamiana pustych stringów na NaN
 df1 = df1.dropna(subset=["Rodzaj promocji"])
 df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
-# Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
-selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "siec", "centralne"]
-pivot_table = pivot_table[selected_columns]
 
 
 # widok z kolejnego arkusza
@@ -116,6 +113,10 @@ pivot_table = df1.pivot_table(
 
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table = pivot_table.reset_index()
+# Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
+selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "siec", "centralne"]
+pivot_table = pivot_table[selected_columns]
+
 pivot_table
 
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
