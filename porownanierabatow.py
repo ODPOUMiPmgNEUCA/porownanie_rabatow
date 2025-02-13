@@ -56,7 +56,7 @@ with col1:
     st.markdown("2.2. Folder pobierze się w formacie **.zip** (jak na rysunku obok - zip - ten zasuwak na folderze).")
 
 with col2:
-    st.image("potrzebne_fotki/zip.png", use_container_width=True, width=10)
+    st.image("potrzebne_fotki/zip.png",  width=10)
 
 st.markdown("2.3. Rozpakuj pobrany plik .zip")
 
