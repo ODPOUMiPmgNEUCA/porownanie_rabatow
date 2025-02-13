@@ -207,42 +207,25 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 
     # Pobranie rozmiaru tabeli
     num_rows = len(pivot_table2)
-    rabat_range = f"D2:F{num_rows+1}"  # Zakres dla kolumn D, E, F
+    rabat_range = f"D2:F{num_rows+1}"  # Zakres dla kolumn IPRA, EO, ŚZ/P
     
     # Formatowanie: Najwyższy rabat → zielony
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(D2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': green_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(E2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': green_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(F2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': green_format
-    })
+    for col in ['D', 'E', 'F']:
+        worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
+            'type': 'formula',
+            'criteria': f"={col}2=MAX($D2:$F2)",
+            'format': green_format
+        })
     
     # Formatowanie: Najniższy rabat → czerwony
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(D2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': red_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(E2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': red_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=(F2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
-        'format': red_format
-    })
-    # 🟠 Formatowanie: Brak rabatu → pomarańczowy
+    for col in ['D', 'E', 'F']:
+        worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
+            'type': 'formula',
+            'criteria': f"={col}2=MIN(IF($D2:$F2<>\"\", $D2:$F2))",
+            'format': red_format
+        })
+    
+    # Formatowanie: Brak rabatu → pomarańczowy
     worksheet3.conditional_format(rabat_range, {
         'type': 'blanks',
         'format': orange_format
