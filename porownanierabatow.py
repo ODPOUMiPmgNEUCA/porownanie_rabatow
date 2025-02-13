@@ -71,6 +71,27 @@ st.markdown("""
 
 
 
+st.markdown("""
+### 🔹 Legenda kolorów arkuszy:
+- 🔵 **Niebieski** – najważniejsze dane z pliku RaportPromocyjny.
+- 🟢 **Zielony** – porównanie rabatów w zależności od rodzaju promocji.
+- 🟡 **Pomarańczowe** – arkusze przedstawiające listę produktów, które w jednym programie są w promocji, a w innym nie.
+
+
+### 📂 Opis arkuszy:
+- **Arkusz 1 – dane**: Zawiera listę aktualnych promocji z datami obowiązywania po produktach z wysokością rabatu.
+- **Arkusz 2 – porównanie rabatów**: Zestawione wartości rabatu w zależności od rodzaju promocji (IPRA, EO, ŚZ/P, RPM, ZGZ, sieci, promocje centralne).
+- **Arkusz 3 – IPRA vs ŚZP**: Porównanie wysyokości rabatu dla IPRA, EO i Świata Zdrowia/Partnera z zaznaczonymi kolorystycznie wysokościami rabatu (zielony - rabat najwyższy, czerwony - rabat najniższy, pomarańczowy - brakk rabatu).
+- **Arkusz 4 – są w IPRA - nie w ŚZP**: Zestawienie produktów, które aktualnie są w promocjach IPRA, nie ma w Świecie Zdrowia/Partnerze.
+- **Arkusz 5 – są w EO - nie w ŚZP**: Zestawienie produktów, które aktualnie są w promocjach EO, nie ma w Świecie Zdrowia/Partnerze.
+- **Arkusz 6 – są w ŚZP - nie w IPRA**: Zestawienie produktów, które aktualnie są w promocjach Świata Zdrowia/Partnera, nie ma w IPRA.
+- **Arkusz 7 – są w ŚZP - nie w EO**: Zestawienie produktów, które aktualnie są w promocjach Świata Zdrowia/Partnera, nie ma w EO.
+
+""", unsafe_allow_html=True)
+
+
+
+
 
 
 
