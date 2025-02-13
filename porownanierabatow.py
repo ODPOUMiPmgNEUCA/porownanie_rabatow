@@ -123,6 +123,7 @@ pivot_table1
 # Tylko IPRA, EO i ŚZ/P
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
 pivot_table2 = pivot_table1[selected2]
+pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%d-%m-%Y')
