@@ -96,6 +96,19 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 # Sprawdzenie wartości po konwersji
 st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
+# widok z kolejnego arkusza
+# Tworzenie tabeli przestawnej
+pivot_table = df.pivot_table(
+    index=["Id Materiału", "Nazwa Materiału"], 
+    columns="Rodzaj Promocji", 
+    values="Rabat Promocyjny", 
+    aggfunc="max"
+)
+
+# Resetowanie indeksu dla lepszej czytelności
+pivot_table = pivot_table.reset_index()
+pivot_table
+
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%Y-%m-%d')
 
