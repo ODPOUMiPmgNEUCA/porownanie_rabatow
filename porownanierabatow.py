@@ -114,7 +114,7 @@ pivot_table = df1.pivot_table(
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
-selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "siec", "centralne"]
+selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table = pivot_table[selected_columns]
 
 pivot_table
