@@ -51,6 +51,14 @@ st.markdown("""
 """)
 st.image('potrzebne_fotki/zip.png')
 
+st.markdown("""
+2.3. 
+""")
+
+
+
+
+
 
 df = st.file_uploader(
     label = "Wrzuć Raport promocyjny"
