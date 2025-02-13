@@ -313,7 +313,7 @@ st.markdown("""
 
 ### 📂 Opis arkuszy:
 - **Arkusz 1 – porównanie rabatów**: Zestawione wartości rabatu w zależności od rodzaju promocji (IPRA, EO, ŚZ/P, RPM, ZGZ, sieci, promocje centralne).
-- **Arkusz 2 – IPRA vs ŚZP**: Porównanie wysyokości rabatu dla IPRA, EO i Świata Zdrowia/Partnera z zaznaczonymi kolorystycznie wysokościami rabatu (zielony - rabat najwyższy, czerwony - rabat najniższy, pomarańczowy - brakk rabatu).
+- **Arkusz 2 – IPRA vs ŚZP**: Porównanie wysyokości rabatu dla IPRA, EO i Świata Zdrowia/Partnera z zaznaczonymi kolorystycznie wysokościami rabatu (zielony - rabat najwyższy, czerwony - rabat najniższy, pomarańczowy - brak rabatu).
 - **Arkusz 3 – są w IPRA - nie w ŚZP**: Zestawienie produktów, które aktualnie są w promocjach IPRA, nie ma w Świecie Zdrowia/Partnerze.
 - **Arkusz 4 – są w IPRA - nie w EO**: Zestawienie produktów, które aktualnie są w promocjach IPRA, nie ma w EO.
 - **Arkusz 5 – są w EO - nie w IPRA**: Zestawienie produktów, które aktualnie są w promocjach EO, nie ma w IPRA.
