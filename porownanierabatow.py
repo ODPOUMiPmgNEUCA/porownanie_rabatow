@@ -158,7 +158,6 @@ products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażoweg
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%d-%m-%Y')
 
-
 # Tworzenie pliku Excel w pamięci
 excel_file1 = io.BytesIO()
 
@@ -174,9 +173,26 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 
     # Pobranie workbooka i arkuszy
     workbook = writer.book
+    worksheet1 = writer.sheets["dane"]
+    worksheet2 = writer.sheets["porównanie rabatów"]
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
+    worksheet4 = writer.sheets["są w IPRA - nie w ŚZP"]
+    worksheet5 = writer.sheets["są w EO - nie w ŚZP"]
+    worksheet6 = writer.sheets["są w ŚZP - nie w IPRA"]
+    worksheet7 = writer.sheets["są w ŚZP - nie w EO"]
 
-    # 🎨 Definiowanie formatów kolorów
+    # 🎨 Ustawienie kolorów zakładek
+    worksheet1.set_tab_color('#0000FF')  # 🔵 Niebieski dla "dane"
+    worksheet2.set_tab_color('#008000')  # 🟢 Zielony dla "porównanie rabatów"
+    worksheet3.set_tab_color('#008000')  # 🟢 Zielony dla "IPRA vs ŚZP"
+    
+    pomaranczowy = '#FFA500'  # 🟠 Pomarańczowy dla arkuszy "są w ... - nie w ..."
+    worksheet4.set_tab_color(pomaranczowy)
+    worksheet5.set_tab_color(pomaranczowy)
+    worksheet6.set_tab_color(pomaranczowy)
+    worksheet7.set_tab_color(pomaranczowy)
+
+    # 🎨 Definiowanie formatów kolorów dla rabatów
     green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony
     red_format = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'})  # Czerwony
     orange_format = workbook.add_format({'bg_color': '#FFA500', 'font_color': '#000000'})  # Pomarańczowy
@@ -186,44 +202,34 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     rabat_range = f"D2:F{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
 
     # 🔹 Formatowanie: Najwyższy rabat → zielony
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(D2=MAXIFS($D2:$F2, $D2:$F2, "<>"), D2<>"")',
-        'format': green_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(E2=MAXIFS($D2:$F2, $D2:$F2, "<>"), E2<>"")',
-        'format': green_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(F2=MAXIFS($D2:$F2, $D2:$F2, "<>"), F2<>"")',
-        'format': green_format
-    })
+    for col in ['D', 'E', 'F']:
+        worksheet3.conditional_format(rabat_range, {
+            'type': 'formula',
+            'criteria': f'={col}2=MAX(IF($D2:$F2<>"", $D2:$F2))',
+            'format': green_format
+        })
 
     # 🔻 Formatowanie: Najniższy rabat → czerwony
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(D2=MINIFS($D2:$F2, $D2:$F2, "<>"), D2<>"")',
-        'format': red_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(E2=MINIFS($D2:$F2, $D2:$F2, "<>"), E2<>"")',
-        'format': red_format
-    })
-    worksheet3.conditional_format(rabat_range, {
-        'type': 'formula',
-        'criteria': '=AND(F2=MINIFS($D2:$F2, $D2:$F2, "<>"), F2<>"")',
-        'format': red_format
-    })
+    for col in ['D', 'E', 'F']:
+        worksheet3.conditional_format(rabat_range, {
+            'type': 'formula',
+            'criteria': f'={col}2=MIN(IF($D2:$F2<>"", $D2:$F2))',
+            'format': red_format
+        })
 
     # 🟠 Formatowanie: Brak rabatu → pomarańczowy
     worksheet3.conditional_format(rabat_range, {
         'type': 'blanks',
         'format': orange_format
     })
+
+    # 📏 Ustawienie szerokości kolumn
+    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
+    
+    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7]:
+        ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
+        ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
@@ -235,3 +241,4 @@ st.download_button(
     file_name=f'Porównanie_rabatów_{today}.xlsx',
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
+
