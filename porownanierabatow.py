@@ -112,20 +112,20 @@ pivot_table = df1.pivot_table(
 )
 
 # Resetowanie indeksu dla lepszej czytelności
-pivot_table = pivot_table.reset_index()
+pivot_table1 = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
-pivot_table = pivot_table[selected_columns]
+pivot_table1 = pivot_table1[selected_columns]
 
-pivot_table
+pivot_table1
 
 
 # Tylko IPRA, EO i ŚZ/P
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
-pivot_table2 = pivot_table[selected2]
+pivot_table2 = pivot_table1[selected2]
 
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
-today = datetime.datetime.today().strftime('%Y-%m-%d')
+today = datetime.datetime.today().strftime('%d-%m-%Y')
 
 # Tworzenie pliku Excel w pamięci
 excel_file1 = io.BytesIO()
@@ -135,7 +135,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     df.to_excel(writer, index=False, sheet_name='dane')
 
     # Zapisanie tabeli przestawnej do arkusza "porównanie_rabatów"
-    pivot_table.to_excel(writer, index=False, sheet_name='porównanie rabatów')
+    pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
     # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZ/P"
     pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZ/P')
@@ -144,7 +144,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     workbook = writer.book
     worksheet1 = writer.sheets["dane"]
     worksheet2 = writer.sheets["porównanie rabatów"]
-    worksheet3 = writer.sheets["IPRA vs ŚZ/P+"]
+    worksheet3 = writer.sheets["IPRA vs ŚZ/P"]
 
     # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
     worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
