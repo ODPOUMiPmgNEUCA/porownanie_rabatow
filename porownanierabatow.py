@@ -47,13 +47,14 @@ st.markdown("""
 1. Nie przejmuj się, że strona wyświetla błąd: **TypeError**. Będzie on widoczny, dopóki nie wrzucisz pliku z Raportem promocyjnym, który codziennie dostajesz na maila :)
 2. Jak go wrzucić?  
     2.1. Pobierz folder z maila.  
-    2.2. Folder pobierze się w formacie **.zip** (jak na rysunku poniżej - zip - ten zasuwak na folderze).
+    2.2. Folder pobierze się w formacie **.zip** (jak na obrazku poniżej - zip - ten zasuwak na folderze).
 """)
 
 
 st.image("potrzebne_fotki/zip.png")
 
-st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3. Rozpakuj pobrany folder .zip, klikając na niego prawym przyciskiem myszy i wybierając opcję **Wyodrębnij wszystkie**""", unsafe_allow_html=True)
+st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3. Rozpakuj pobrany folder .zip, klikając na niego prawym przyciskiem myszy i wybierając opcję **Wyodrębnij wszystkie**.""", unsafe_allow_html=True)
+st.markdown("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.4. Teraz powinien pojawić się folder bez suwaka - jak na obrazku poniżej""", unsafe_allow_html=True)
 
 
 
