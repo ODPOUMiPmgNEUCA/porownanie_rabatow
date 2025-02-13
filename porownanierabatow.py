@@ -53,7 +53,7 @@ st.markdown("""
 
 st.image("potrzebne_fotki/zip.png")
 
-st.markdown("&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp; 2.3. Rozpakuj pobrany plik .zip", unsafe_allow_html=True)
+st.markdown("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3. Rozpakuj pobrany plik .zip", unsafe_allow_html=True)
 
 
 
