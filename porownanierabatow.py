@@ -168,22 +168,16 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisanie tabeli przestawnej do arkusza "porównanie_rabatów"
     pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
-    # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZ/P"
-    pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZP')
+    # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZP"
+    pivot_table2.to_excel(writer, index=False, sheet_name='IPRA vs ŚZP')
 
-    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
-    products_ipra_not_szp.to_excel(writer, index = False, sheet_name='są w IPRA - nie w ŚZP')
+    # Zapisanie tabeli przestawnej do arkuszy "są w ... - nie w ..."
+    products_ipra_not_szp.to_excel(writer, index=False, sheet_name='są w IPRA - nie w ŚZP')
+    products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
+    products_szp_not_ipra.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w IPRA')
+    products_szp_not_eo.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w EO')
 
-    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
-    products_eo_not_szp.to_excel(writer, index = False, sheet_name='są w EO - nie w ŚZP')
-
-    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
-    products_szp_not_ipra.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w IPRA')
-
-    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
-    products_szp_not_eo.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w EO')
-
-    # Pobranie obiektu workbook i worksheet
+    # Pobranie workbooka i arkuszy
     workbook = writer.book
     worksheet1 = writer.sheets["dane"]
     worksheet2 = writer.sheets["porównanie rabatów"]
@@ -193,22 +187,17 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet6 = writer.sheets["są w ŚZP - nie w IPRA"]
     worksheet7 = writer.sheets["są w ŚZP - nie w EO"]
 
-    # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
-    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
-    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
-    worksheet2.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet3.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet2.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet3.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet4.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet5.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet4.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet5.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet6.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet7.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet6.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-    worksheet7.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    # Ustawienie kolorów zakładek
+    worksheet1.set_tab_color('#0000FF')  # Niebieski dla "dane"
+    worksheet2.set_tab_color('#008000')  # Zielony dla "porównanie rabatów"
+    worksheet3.set_tab_color('#008000')  # Zielony dla "IPRA vs ŚZP"
     
+    # Pomarańczowy dla arkuszy "są w ... - nie w ..."
+    pomaranczowy = '#FFA500'
+    worksheet4.set_tab_color(pomaranczowy)
+    worksheet5.set_tab_color(pomaranczowy)
+    worksheet6.set_tab_color(pomaranczowy)
+    worksheet7.set_tab_color(pomaranczowy)
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
@@ -220,6 +209,5 @@ st.download_button(
     file_name=f'Porównanie_rabatów_{today}.xlsx',
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
-
 
 
