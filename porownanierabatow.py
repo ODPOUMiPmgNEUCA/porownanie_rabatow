@@ -98,9 +98,11 @@ st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].
 
 df1 = df.copy()
 # Usunięcie spacji i zamiana pustych stringów na NaN
-df["Rodzaj Promocji"] = df["Rodzaj Promocji"].replace(r"^\s*$", pd.NA, regex=True)
 df1 = df1.dropna(subset=["Rodzaj promocji"])
 df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
+# Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
+selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "siec", "centralne"]
+pivot_table = pivot_table[selected_columns]
 
 
 # widok z kolejnego arkusza
