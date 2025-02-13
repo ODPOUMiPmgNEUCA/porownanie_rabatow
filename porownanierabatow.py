@@ -209,6 +209,57 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
         ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
         ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
 
+    # 🎨 FORMATOWANIE WARUNKOWE W "IPRA vs ŚZP" 🎨
+
+    # Definiowanie formatów kolorów
+    green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony (najwyższy rabat)
+    red_format = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'})  # Czerwony (najniższy rabat)
+    orange_format = workbook.add_format({'bg_color': '#FFA500', 'font_color': '#000000'})  # Pomarańczowy (brak rabatu)
+
+    # Pobranie rozmiaru tabeli (ilość wierszy i kolumn)
+    num_rows = len(pivot_table2)
+    rabat_range = f"D2:F{num_rows+1}"  # Zakres D2:F (kolumny z rabatami)
+
+    # Formatowanie warunkowe – najwyższy rabat na zielono
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(D2=MAX($D2:$F2), D2<>"")',
+        'format': green_format
+    })
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(E2=MAX($D2:$F2), E2<>"")',
+        'format': green_format
+    })
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(F2=MAX($D2:$F2), F2<>"")',
+        'format': green_format
+    })
+
+    # Formatowanie warunkowe – najniższy rabat na czerwono
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(D2=MIN($D2:$F2), D2<>"")',
+        'format': red_format
+    })
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(E2=MIN($D2:$F2), E2<>"")',
+        'format': red_format
+    })
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'formula',
+        'criteria': '=AND(F2=MIN($D2:$F2), F2<>"")',
+        'format': red_format
+    })
+
+    # Formatowanie warunkowe – brak rabatu (pusta komórka) na pomarańczowo
+    worksheet3.conditional_format(rabat_range, {
+        'type': 'blanks',
+        'format': orange_format
+    })
+
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
 
