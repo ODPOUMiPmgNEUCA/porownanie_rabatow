@@ -163,16 +163,10 @@ today = datetime.datetime.today().strftime('%d-%m-%Y')
 excel_file1 = io.BytesIO()
 
 with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
-    # Zapisanie oryginalnych danych do arkusza "dane"
+    # Zapisywanie arkuszy
     df.to_excel(writer, index=False, sheet_name='dane')
-
-    # Zapisanie tabeli przestawnej do arkusza "porównanie rabatów"
     pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
-
-    # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZP"
     pivot_table2.to_excel(writer, index=False, sheet_name='IPRA vs ŚZP')
-
-    # Zapisanie tabeli przestawnej do arkuszy "są w ... - nie w ..."
     products_ipra_not_szp.to_excel(writer, index=False, sheet_name='są w IPRA - nie w ŚZP')
     products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
     products_szp_not_ipra.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w IPRA')
@@ -180,81 +174,52 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 
     # Pobranie workbooka i arkuszy
     workbook = writer.book
-    worksheet1 = writer.sheets["dane"]
-    worksheet2 = writer.sheets["porównanie rabatów"]
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
-    worksheet4 = writer.sheets["są w IPRA - nie w ŚZP"]
-    worksheet5 = writer.sheets["są w EO - nie w ŚZP"]
-    worksheet6 = writer.sheets["są w ŚZP - nie w IPRA"]
-    worksheet7 = writer.sheets["są w ŚZP - nie w EO"]
 
-    # Ustawienie kolorów zakładek
-    worksheet1.set_tab_color('#0000FF')  # 🔵 Niebieski dla "dane"
-    worksheet2.set_tab_color('#008000')  # 🟢 Zielony dla "porównanie rabatów"
-    worksheet3.set_tab_color('#008000')  # 🟢 Zielony dla "IPRA vs ŚZP"
-    
-    # 🟠 Pomarańczowy dla arkuszy "są w ... - nie w ..."
-    pomaranczowy = '#FFA500'
-    worksheet4.set_tab_color(pomaranczowy)
-    worksheet5.set_tab_color(pomaranczowy)
-    worksheet6.set_tab_color(pomaranczowy)
-    worksheet7.set_tab_color(pomaranczowy)
+    # 🎨 Definiowanie formatów kolorów
+    green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony
+    red_format = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'})  # Czerwony
+    orange_format = workbook.add_format({'bg_color': '#FFA500', 'font_color': '#000000'})  # Pomarańczowy
 
-    # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
-    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
-    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
-    
-    # Ustawienie szerokości kolumn w odpowiednich arkuszach
-    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7]:
-        ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
-        ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
-
-    # 🎨 FORMATOWANIE WARUNKOWE W "IPRA vs ŚZP" 🎨
-
-    # Definiowanie formatów kolorów
-    green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony (najwyższy rabat)
-    red_format = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'})  # Czerwony (najniższy rabat)
-    orange_format = workbook.add_format({'bg_color': '#FFA500', 'font_color': '#000000'})  # Pomarańczowy (brak rabatu)
-
-    # Pobranie rozmiaru tabeli (ilość wierszy i kolumn)
+    # Pobranie rozmiaru tabeli
     num_rows = len(pivot_table2)
-    rabat_range = f"D2:F{num_rows+1}"  # Zakres D2:F (kolumny z rabatami)
+    rabat_range = f"D2:F{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
 
-    # Formatowanie warunkowe – najwyższy rabat na zielono
+    # 🔹 Formatowanie: Najwyższy rabat → zielony
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(D2=MAX($D2:$F2), D2<>"")',
+        'criteria': '=AND(D2=MAXIFS($D2:$F2, $D2:$F2, "<>"), D2<>"")',
         'format': green_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(E2=MAX($D2:$F2), E2<>"")',
+        'criteria': '=AND(E2=MAXIFS($D2:$F2, $D2:$F2, "<>"), E2<>"")',
         'format': green_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(F2=MAX($D2:$F2), F2<>"")',
+        'criteria': '=AND(F2=MAXIFS($D2:$F2, $D2:$F2, "<>"), F2<>"")',
         'format': green_format
     })
 
-    # Formatowanie warunkowe – najniższy rabat na czerwono
+    # 🔻 Formatowanie: Najniższy rabat → czerwony
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(D2=MIN($D2:$F2), D2<>"")',
+        'criteria': '=AND(D2=MINIFS($D2:$F2, $D2:$F2, "<>"), D2<>"")',
         'format': red_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(E2=MIN($D2:$F2), E2<>"")',
+        'criteria': '=AND(E2=MINIFS($D2:$F2, $D2:$F2, "<>"), E2<>"")',
         'format': red_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(F2=MIN($D2:$F2), F2<>"")',
+        'criteria': '=AND(F2=MINIFS($D2:$F2, $D2:$F2, "<>"), F2<>"")',
         'format': red_format
     })
 
-    # Formatowanie warunkowe – brak rabatu (pusta komórka) na pomarańczowo
+    # 🟠 Formatowanie: Brak rabatu → pomarańczowy
     worksheet3.conditional_format(rabat_range, {
         'type': 'blanks',
         'format': orange_format
@@ -263,11 +228,10 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
 
-# Umożliwienie pobrania pliku Excel w Streamlit
+# Pobranie pliku w Streamlit
 st.download_button(
     label='Pobierz porównanie rabatów',
     data=excel_file1,
     file_name=f'Porównanie_rabatów_{today}.xlsx',
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
-
