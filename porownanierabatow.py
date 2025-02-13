@@ -105,7 +105,7 @@ df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce"
 # widok z kolejnego arkusza
 # Tworzenie tabeli przestawnej
 pivot_table = df1.pivot_table(
-    index=["Id Materiału", "Nazwa Materiału"], 
+    index=["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału"], 
     columns="Rodzaj promocji", 
     values="Rabat Promocyjny", 
     aggfunc="max"
@@ -114,7 +114,7 @@ pivot_table = df1.pivot_table(
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
-selected_columns = ["Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
+selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table = pivot_table[selected_columns]
 
 pivot_table
