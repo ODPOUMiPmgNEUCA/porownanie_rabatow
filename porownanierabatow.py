@@ -52,7 +52,7 @@ st.markdown("""
 st.image('potrzebne_fotki/zip.png')
 
 st.markdown("""  
-2.3. 
+  2.3. 
 """)
 
 
