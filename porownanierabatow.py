@@ -63,6 +63,13 @@ st.markdown(""" """)
 st.image("potrzebne_fotki/rozpakowany_zip.png")
 
 
+st.markdown("""
+3. Przeciągnij plik RaportPromocyjny na szare pole poniżej.  
+4. Teraz trzeba chwilkę poczekać... plik się załaduje, a w prawym górnym rogu pojawi się ikonka ludzika - to znaczy, że aplikacja myśli, dajmy jej chwilę :)
+5. Gdy wszystko przebiegnie zgodnie z planem pojawi się przycisk **Pobierz porównanie rabatów**.
+""")
+
+
 
 
 
