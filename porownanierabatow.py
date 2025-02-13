@@ -96,9 +96,13 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 # Sprawdzenie wartości po konwersji
 st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
+df1 = df.copy()
+df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
+
+
 # widok z kolejnego arkusza
 # Tworzenie tabeli przestawnej
-pivot_table = df.pivot_table(
+pivot_table = df1.pivot_table(
     index=["Id Materiału", "Nazwa Materiału"], 
     columns="Rodzaj Promocji", 
     values="Rabat Promocyjny", 
