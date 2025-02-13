@@ -97,6 +97,8 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
 df1 = df.copy()
+# Usunięcie spacji i zamiana pustych stringów na NaN
+df["Rodzaj Promocji"] = df["Rodzaj Promocji"].replace(r"^\s*$", pd.NA, regex=True)
 df1 = df1.dropna(subset=["Rodzaj promocji"])
 df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
 
