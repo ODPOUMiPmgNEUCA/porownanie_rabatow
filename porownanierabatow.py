@@ -58,10 +58,7 @@ st.markdown("""
     <p style="margin: 0;">2.3. Rozpakuj pobrany folder .zip, klikając na niego prawym przyciskiem myszy i wybierając opcję <b>Wyodrębnij wszystkie</b>.</p>
     <p style="margin: 0;">2.4. Teraz powinien otworzyć się rozpakowany folder z dwoma plikami Excel wewnątrz - jak na obrazku poniżej.</p>
 </div>
-""", unsafe_allow_html=True)
-
-
-
+""", unsafe_allow_html=True)  
 st.image("potrzebne_fotki/rozpakowany_zip.png")
 
 
