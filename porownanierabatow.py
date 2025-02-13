@@ -149,8 +149,11 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 
     # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
     max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     worksheet2.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
     worksheet3.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet2.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet3.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
 
 
     # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
