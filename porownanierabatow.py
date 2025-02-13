@@ -119,6 +119,11 @@ pivot_table = pivot_table[selected_columns]
 
 pivot_table
 
+
+# Tylko IPRA, EO i ŚZ/P
+selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
+pivot_table2 = pivot_table[selected2]
+
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -132,14 +137,19 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisanie tabeli przestawnej do arkusza "porównanie_rabatów"
     pivot_table.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
+    # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZ/P"
+    pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZ/P')
+
     # Pobranie obiektu workbook i worksheet
     workbook = writer.book
     worksheet1 = writer.sheets["dane"]
     worksheet2 = writer.sheets["porównanie rabatów"]
+    worksheet3 = writer.sheets["IPRA vs ŚZ/P+"]
 
     # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
     worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
     worksheet2.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    worksheet3.set_column("A:Z", 15)  # Dostosuj zakres kolumn
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
