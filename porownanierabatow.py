@@ -50,13 +50,13 @@ st.markdown("""
 """)
 
 # Ustawienie dwóch kolumn
-col1, col2 = st.columns([4, 2])  # Proporcje szerokości kolumn
+col1, col2 = st.columns([4, 1])  # Proporcje szerokości kolumn
 
 with col1:
     st.markdown("2.2. Folder pobierze się w formacie **.zip** (jak na rysunku obok - zip - ten zasuwak na folderze).")
 
 with col2:
-    st.image("potrzebne_fotki/zip.png", use_container_width=True)
+    st.image("potrzebne_fotki/zip.png", use_container_width=True, width=100)
 
 st.markdown("2.3. Rozpakuj pobrany plik .zip")
 
