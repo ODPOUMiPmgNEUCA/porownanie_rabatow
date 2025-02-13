@@ -147,10 +147,16 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet2 = writer.sheets["porównanie rabatów"]
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
 
+    # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
+    max_length = df_filtered['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    worksheet2.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet3.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+
+
     # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
-    worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
-    worksheet2.set_column("A:Z", 15)  # Dostosuj zakres kolumn
-    worksheet3.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    #worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    #worksheet2.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    #worksheet3.set_column("A:Z", 15)  # Dostosuj zakres kolumn
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
