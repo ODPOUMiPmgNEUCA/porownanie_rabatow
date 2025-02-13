@@ -47,13 +47,18 @@ st.markdown("""
 1. Nie przejmuj się, że strona wyświetla błąd: **TypeError**. Będzie on widoczny, dopóki nie wrzucisz pliku z Raportem promocyjnym, który codziennie dostajesz na maila :)
 2. Jak go wrzucić?  
     2.1. Pobierz folder z maila.  
-    2.2. Folder pobierze się w formacie **.zip** (jak na rysunku poniżej - zip - ten zasuwak na folderze).  
 """)
-st.image('potrzebne_fotki/zip.png')
 
-st.markdown("""  
-  2.3. 
-""")
+# Ustawienie dwóch kolumn
+col1, col2 = st.columns([3, 2])  # Proporcje szerokości kolumn
+
+with col1:
+    st.markdown("2.2. Folder pobierze się w formacie **.zip** (jak na rysunku obok - zip - ten zasuwak na folderze).")
+
+with col2:
+    st.image("potrzebne_fotki/zip.png", use_column_width=True)
+
+st.markdown("2.3. Rozpakuj pobrany plik .zip")
 
 
 
