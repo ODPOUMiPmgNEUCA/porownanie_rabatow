@@ -51,7 +51,7 @@ st.markdown("""
 """)
 st.image('potrzebne_fotki/zip.png')
 
-st.markdown("""
+st.markdown("""  
 2.3. 
 """)
 
