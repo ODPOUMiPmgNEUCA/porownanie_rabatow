@@ -121,23 +121,25 @@ today = datetime.datetime.today().strftime('%Y-%m-%d')
 excel_file1 = io.BytesIO()
 
 with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
-    # Zapisanie DataFrame do arkusza o nazwie "dane"
+    # Zapisanie oryginalnych danych do arkusza "dane"
     df.to_excel(writer, index=False, sheet_name='dane')
+
+    # Zapisanie tabeli przestawnej do arkusza "porównanie_rabatów"
+    pivot_table.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
     # Pobranie obiektu workbook i worksheet
     workbook = writer.book
-    worksheet = writer.sheets["dane"]
+    worksheet1 = writer.sheets["dane"]
+    worksheet2 = writer.sheets["porównanie rabatów"]
 
-    # Definiowanie formatu liczbowego z przecinkiem dziesiętnym
-    #format_percent = workbook.add_format({"num_format": "0,00"})  # Dwa miejsca po przecinku
-
-    # Ustalenie szerokości kolumn i zastosowanie formatu (dla całego zakresu kolumn)
-    #worksheet.set_column("B:Z", None, format_percent)  # Dostosuj zakres kolumn do swojego pliku
+    # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
+    worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    worksheet2.set_column("A:Z", 15)  # Dostosuj zakres kolumn
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
 
-# Umożliwienie pobrania pliku Excel
+# Umożliwienie pobrania pliku Excel w Streamlit
 st.download_button(
     label='Pobierz porównanie rabatów',
     data=excel_file1,
