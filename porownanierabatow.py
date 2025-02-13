@@ -49,7 +49,7 @@ st.markdown("""
     2.1. Pobierz folder z maila.  
     2.2. Folder pobierze się w formacie **.zip**.  
 """)
-st.image('potrzbne_fotki/zip.png')
+st.image('potrzebne_fotki/zip.png')
 
 
 df = st.file_uploader(
