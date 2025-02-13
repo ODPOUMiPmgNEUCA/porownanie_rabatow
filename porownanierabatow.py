@@ -97,7 +97,7 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
 df1 = df.copy()
-df1 = df1.dropna(subset=["Rodzaj Promocji"])
+df1 = df1.dropna(subset=["Rodzaj promocji"])
 df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
 
 
@@ -105,7 +105,7 @@ df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce"
 # Tworzenie tabeli przestawnej
 pivot_table = df1.pivot_table(
     index=["Id Materiału", "Nazwa Materiału"], 
-    columns="Rodzaj Promocji", 
+    columns="Rodzaj promocji", 
     values="Rabat Promocyjny", 
     aggfunc="max"
 )
