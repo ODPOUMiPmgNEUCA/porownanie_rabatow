@@ -158,6 +158,7 @@ products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażoweg
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%d-%m-%Y')
 
+
 # Tworzenie pliku Excel w pamięci
 excel_file1 = io.BytesIO()
 
@@ -165,7 +166,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisanie oryginalnych danych do arkusza "dane"
     df.to_excel(writer, index=False, sheet_name='dane')
 
-    # Zapisanie tabeli przestawnej do arkusza "porównanie_rabatów"
+    # Zapisanie tabeli przestawnej do arkusza "porównanie rabatów"
     pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
     # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZP"
@@ -188,16 +189,25 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet7 = writer.sheets["są w ŚZP - nie w EO"]
 
     # Ustawienie kolorów zakładek
-    worksheet1.set_tab_color('#0000FF')  # Niebieski dla "dane"
-    worksheet2.set_tab_color('#008000')  # Zielony dla "porównanie rabatów"
-    worksheet3.set_tab_color('#008000')  # Zielony dla "IPRA vs ŚZP"
+    worksheet1.set_tab_color('#0000FF')  # 🔵 Niebieski dla "dane"
+    worksheet2.set_tab_color('#008000')  # 🟢 Zielony dla "porównanie rabatów"
+    worksheet3.set_tab_color('#008000')  # 🟢 Zielony dla "IPRA vs ŚZP"
     
-    # Pomarańczowy dla arkuszy "są w ... - nie w ..."
+    # 🟠 Pomarańczowy dla arkuszy "są w ... - nie w ..."
     pomaranczowy = '#FFA500'
     worksheet4.set_tab_color(pomaranczowy)
     worksheet5.set_tab_color(pomaranczowy)
     worksheet6.set_tab_color(pomaranczowy)
     worksheet7.set_tab_color(pomaranczowy)
+
+    # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
+    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
+    
+    # Ustawienie szerokości kolumn w odpowiednich arkuszach
+    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7]:
+        ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
+        ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
@@ -209,5 +219,4 @@ st.download_button(
     file_name=f'Porównanie_rabatów_{today}.xlsx',
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
-
 
