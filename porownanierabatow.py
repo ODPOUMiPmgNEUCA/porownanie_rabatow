@@ -181,7 +181,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     products_szp_not_ipra.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w IPRA')
 
     # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
-    products_szp_not_eo.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w EO"')
+    products_szp_not_eo.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w EO')
 
     # Pobranie obiektu workbook i worksheet
     workbook = writer.book
