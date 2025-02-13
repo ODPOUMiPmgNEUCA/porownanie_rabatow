@@ -97,6 +97,7 @@ st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dty
 st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
 
 df1 = df.copy()
+df1 = df1.dropna(subset=["Rodzaj Promocji"])
 df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
 
 
