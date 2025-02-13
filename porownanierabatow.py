@@ -205,40 +205,43 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     num_rows = len(pivot_table2)
     rabat_range = f"D2:F{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
 
+    # Pobranie rozmiaru tabeli
+    num_rows = len(pivot_table2)
+    rabat_range = f"D2:F{num_rows+1}"  # Zakres dla kolumn D, E, F
+    
     # Formatowanie: Najwyższy rabat → zielony
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(D2<>"", D2=MAX($D2:$F2))',
+        'criteria': '=(D2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
         'format': green_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(E2<>"", E2=MAX($D2:$F2))',
+        'criteria': '=(E2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
         'format': green_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(F2<>"", F2=MAX($D2:$F2))',
+        'criteria': '=(F2=MAX(IF($D2:$F2<>"", $D2:$F2)))',
         'format': green_format
     })
-
+    
     # Formatowanie: Najniższy rabat → czerwony
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(D2<>"", D2=MIN($D2:$F2))',
+        'criteria': '=(D2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
         'format': red_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(E2<>"", E2=MIN($D2:$F2))',
+        'criteria': '=(E2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
         'format': red_format
     })
     worksheet3.conditional_format(rabat_range, {
         'type': 'formula',
-        'criteria': '=AND(F2<>"", F2=MIN($D2:$F2))',
+        'criteria': '=(F2=MIN(IF($D2:$F2<>"", $D2:$F2)))',
         'format': red_format
     })
-
     # 🟠 Formatowanie: Brak rabatu → pomarańczowy
     worksheet3.conditional_format(rabat_range, {
         'type': 'blanks',
