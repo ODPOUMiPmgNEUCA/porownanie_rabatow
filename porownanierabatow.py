@@ -46,9 +46,9 @@ st.markdown("""
 ### Jak korzystać z aplikacji?
 1. Nie przejmuj się, że strona wyświetla błąd: TypeError. Będzie on widoczny, dopóki nie wrzucisz pliku z Raportem promocyjnym, który codziennie dostajesz na maila :)
 2. Jak go wrzucić?
-2.1. Pobierz folder z maila.
-2.2. Folder pobierze się w formacie .zip.
-#2.3. 
+    2.1. Pobierz folder z maila.
+    2.2. Folder pobierze się w formacie .zip.
+    2.3. 
 
 """)
 
