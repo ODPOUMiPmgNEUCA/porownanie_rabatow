@@ -125,6 +125,36 @@ selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materia�
 pivot_table2 = pivot_table1[selected2]
 pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 
+
+
+# Są w IPRA, nie ma w ŚZ/P
+# Krok 1: Wybieramy produkty, które są w "IPRA", ale nie ma ich w "ŚZ/P"
+df_ipra = pivot_table1[pivot_table2["IPRA"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "IPRA" jest wartość (nie NaN)
+df_szp = pivot_table2[pivot_table2["ŚZ/P"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "ŚZ/P" jest wartość (nie NaN)
+# Krok 2: Usuwamy produkty z df_ipra, które występują w df_szp
+# Zakładając, że "Id Materiału" set difference na Id materiału
+products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id Materiału"])]
+# Krok 3: Tworzymy tabelę z produktami, które są w IPRA, ale nie w ŚZ/P
+# Możesz dodać dowolne kolumny, które chcesz w tej tabeli, np.:
+products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+
+
+# Są w EO, nie ma w ŚZ/P
+df_eo = pivot_table1[pivot_table2["EO"].notna()]
+products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
+products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
+
+# Są w ŚZ/P, nie ma w IPRA
+products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])]
+products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+
+# Są w ŚZ/P, nie ma w EO
+products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
+products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+
+
+
+
 # Pobranie dzisiejszej daty w formacie YYYY-MM-DD
 today = datetime.datetime.today().strftime('%d-%m-%Y')
 
@@ -141,11 +171,27 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZ/P"
     pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZP')
 
+    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
+    products_ipra_not_szp.to_excel(writer, index = False, sheet_name='są w IPRA - nie w ŚZP')
+
+    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
+    products_eo_not_szp.to_excel(writer, index = False, sheet_name='są w EO - nie w ŚZP')
+
+    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
+    products_szp_not_ipra.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w IPRA')
+
+    # Zapisanie tabeli przestawnej do arkusza "są w IPRA - nie w ŚZP"
+    products_szp_not_eo.to_excel(writer, index = False, sheet_name='są w ŚZP - nie w EO"')
+
     # Pobranie obiektu workbook i worksheet
     workbook = writer.book
     worksheet1 = writer.sheets["dane"]
     worksheet2 = writer.sheets["porównanie rabatów"]
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
+    worksheet4 = writer.sheets["są w IPRA - nie w ŚZP"]
+    worksheet5 = writer.sheets["są w EO - nie w ŚZP"]
+    worksheet6 = writer.sheets["są w ŚZP - nie w IPRA"]
+    worksheet7 = writer.sheets["są w ŚZP - nie w EO"]
 
     # Ustaw szerokość kolumny 'Nazwa Materiału' do długości tekstu
     max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
@@ -154,12 +200,15 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet3.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
     worksheet2.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
     worksheet3.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
-
-
-    # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
-    #worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
-    #worksheet2.set_column("A:Z", 15)  # Dostosuj zakres kolumn
-    #worksheet3.set_column("A:Z", 15)  # Dostosuj zakres kolumn
+    worksheet4.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet5.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet4.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet5.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet6.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet7.set_column('C:C', max_length + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet6.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    worksheet7.set_column('A:A', max_length1 + 2)  # Zwiększamy o 2, aby było trochę przestrzeni
+    
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
