@@ -138,13 +138,13 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
 
     # Zapisanie tabeli przestawnej do arkusza "IPRA vs ŚZ/P"
-    pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZ/P')
+    pivot_table2.to_excel(writer, index = False, sheet_name='IPRA vs ŚZP')
 
     # Pobranie obiektu workbook i worksheet
     workbook = writer.book
     worksheet1 = writer.sheets["dane"]
     worksheet2 = writer.sheets["porównanie rabatów"]
-    worksheet3 = writer.sheets["IPRA vs ŚZ/P"]
+    worksheet3 = writer.sheets["IPRA vs ŚZP"]
 
     # Opcjonalne ustawienia formatowania (np. szerokość kolumn)
     worksheet1.set_column("A:Z", 15)  # Dostosuj zakres kolumn
