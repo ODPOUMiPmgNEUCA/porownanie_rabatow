@@ -129,7 +129,7 @@ pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 
 # Są w IPRA, nie ma w ŚZ/P
 # Krok 1: Wybieramy produkty, które są w "IPRA", ale nie ma ich w "ŚZ/P"
-df_ipra = pivot_table1[pivot_table2["IPRA"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "IPRA" jest wartość (nie NaN)
+df_ipra = pivot_table2[pivot_table2["IPRA"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "IPRA" jest wartość (nie NaN)
 df_szp = pivot_table2[pivot_table2["ŚZ/P"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "ŚZ/P" jest wartość (nie NaN)
 # Krok 2: Usuwamy produkty z df_ipra, które występują w df_szp
 # Zakładając, że "Id Materiału" set difference na Id materiału
@@ -140,7 +140,7 @@ products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedaż
 
 
 # Są w EO, nie ma w ŚZ/P
-df_eo = pivot_table1[pivot_table2["EO"].notna()]
+df_eo = pivot_table2[pivot_table2["EO"].notna()]
 products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
 products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
 
