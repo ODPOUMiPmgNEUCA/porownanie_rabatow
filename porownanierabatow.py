@@ -48,14 +48,8 @@ st.markdown("""
 2. Jak go wrzucić?
 2.1. Pobierz folder z maila.
 2.2. Folder pobierze się w formacie .zip.
-2.3. 
-2. **Kliknij „Przetwórz dane”** – aplikacja automatycznie sformatuje dane.
-3. **Pobierz gotowy plik** – po zakończeniu pojawi się przycisk „Pobierz wyniki”.
-4. **Legenda kolorów**:
-   - 🟢 Zielony – najwyższy rabat
-   - 🔴 Czerwony – najniższy rabat
-   - 🟠 Pomarańczowy – brak rabatu
-5. **Jeśli masz pytania, skontaktuj się z zespołem IT.**
+#2.3. 
+
 """)
 
 
