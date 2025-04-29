@@ -102,7 +102,7 @@ df = df[kolumny]
 #df
 # Czy dopuszcza rabat kontraktowy = 1 - tylko promocje WHA
 df = df[df["Czy dopuszcza rabat kontraktowy"] == 1]
-df
+#df
 
 # Rodzaj promocji
 df["Rodzaj promocji"] = ""  # Inicjalizacja kolumny
@@ -113,6 +113,7 @@ df.loc[df["Nazwa Promocji"].str.contains("BKS", na=False), "Rodzaj promocji"] = 
 df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = "RPM"
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
 df.loc[df["Nazwa Promocji"].str.contains("RPM_HIT|RPM HIT", na=False, regex=True), "Rodzaj promocji"] = "EO"
+df
 
 # Oczyszczanie kolumny 'Rabat Promocyjny'
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
