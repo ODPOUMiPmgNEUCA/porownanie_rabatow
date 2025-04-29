@@ -113,7 +113,7 @@ df.loc[df["Nazwa Promocji"].str.contains("BKS", na=False), "Rodzaj promocji"] = 
 df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = "RPM"
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
 df.loc[df["Nazwa Promocji"].str.contains("RPM_HIT|RPM HIT", na=False, regex=True), "Rodzaj promocji"] = "EO"
-df
+#df
 
 # Oczyszczanie kolumny 'Rabat Promocyjny'
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
@@ -128,7 +128,7 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
 df = df[df["Rabat Promocyjny"] != 0]
 
-
+df
 
 # Sprawdzenie wartości po konwersji
 # st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
