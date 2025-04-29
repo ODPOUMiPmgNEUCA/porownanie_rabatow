@@ -99,10 +99,10 @@ kolumny = [
 #print("Typ df:", type(df))
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
-df
+#df
 # Czy dopuszcza rabat kontraktowy = 1 - tylko promocje WHA
 df = df[df["Czy dopuszcza rabat kontraktowy"] == 1]
-
+df
 
 # Rodzaj promocji
 df["Rodzaj promocji"] = ""  # Inicjalizacja kolumny
