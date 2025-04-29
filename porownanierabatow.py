@@ -128,7 +128,7 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
 df = df[df["Rabat Promocyjny"] != 0]
 
-df
+#df
 
 # Sprawdzenie wartości po konwersji
 # st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
@@ -151,6 +151,7 @@ pivot_table = df1.pivot_table(
     aggfunc="max"
 )
 
+pivot_table
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table1 = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
