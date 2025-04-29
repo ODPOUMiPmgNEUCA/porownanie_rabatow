@@ -304,7 +304,8 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
     max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     
-    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
+    #for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
+    for ws in [worksheet2, worksheet3, worksheet4, worksheet8]:
         ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
         ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
 
