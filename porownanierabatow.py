@@ -168,7 +168,16 @@ pivot_table1 = pivot_table1[selected_columns]
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
 selected2 = [col for col in selected2 if col in pivot_table1.columns]
 pivot_table2 = pivot_table1[selected2]
-pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
+# Lista kolumn do sprawdzenia
+kolumny_do_sprawdzenia = ["IPRA", "EO", "ŚZ/P"]
+
+# Filtruj tylko te, które faktycznie istnieją w DataFrame
+istniejace_kolumny = [col for col in kolumny_do_sprawdzenia if col in pivot_table2.columns]
+
+# Usuń wiersze, gdzie wszystkie z tych kolumn mają NaN
+if istniejace_kolumny:
+    pivot_table2 = pivot_table2.dropna(subset=istniejace_kolumny, how="all")
+#pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 #pivot_table2
 
 
