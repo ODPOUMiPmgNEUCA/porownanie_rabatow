@@ -166,6 +166,7 @@ pivot_table1 = pivot_table1[selected_columns]
 
 # Tylko IPRA, EO i ŚZ/P
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
+selected2 = [col for col in selected2 if col in pivot_table1.columns]
 pivot_table2 = pivot_table1[selected2]
 pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 #pivot_table2
