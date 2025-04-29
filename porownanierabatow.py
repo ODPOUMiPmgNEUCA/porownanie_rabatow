@@ -158,7 +158,7 @@ pivot_table1 = pivot_table.reset_index()
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table1 = pivot_table1[selected_columns]
 
-# pivot_table1
+pivot_table1
 
 
 # Tylko IPRA, EO i ŚZ/P
