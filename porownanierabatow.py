@@ -96,6 +96,7 @@ kolumny = [
 
 ]
 
+print("Typ df:", type(df))
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
 
