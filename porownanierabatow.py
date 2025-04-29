@@ -158,14 +158,14 @@ pivot_table1 = pivot_table.reset_index()
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table1 = pivot_table1[selected_columns]
 
-pivot_table1
+#pivot_table1
 
 
 # Tylko IPRA, EO i ŚZ/P
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
 pivot_table2 = pivot_table1[selected2]
 pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
-
+pivot_table2
 
 
 # Są w IPRA, nie ma w ŚZ/P
