@@ -156,8 +156,9 @@ pivot_table
 pivot_table1 = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
-st.write("Kolumny w pivot_table1:", pivot_table1.columns.tolist())
-st.write("Wybrane kolumny:", selected_columns)
+#st.write("Kolumny w pivot_table1:", pivot_table1.columns.tolist())
+#st.write("Wybrane kolumny:", selected_columns)
+selected_columns = [col for col in selected_columns if col in pivot_table1.columns]
 pivot_table1 = pivot_table1[selected_columns]
 
 #pivot_table1
