@@ -151,7 +151,7 @@ pivot_table = df1.pivot_table(
     aggfunc="max"
 )
 
-pivot_table
+#pivot_table
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table1 = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
