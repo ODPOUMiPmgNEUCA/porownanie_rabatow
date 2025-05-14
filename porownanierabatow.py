@@ -194,25 +194,25 @@ products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedaż
 
 
 # Są w EO, nie ma w ŚZ/P
-#df_eo = pivot_table2[pivot_table2["EO"].notna()]
-#products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
-#products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
+df_eo = pivot_table2[pivot_table2["EO"].notna()]
+products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
+products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 # Są w ŚZ/P, nie ma w IPRA
 products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])]
 products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w ŚZ/P, nie ma w EO
-#products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
-#products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
+products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w IPRA, nie ma w EO
-#products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])]
-#products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])]
+products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 # Są w EO, nie ma w IPRA
-#products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])]
-#products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])]
+products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 
 
@@ -229,11 +229,11 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
     pivot_table2.to_excel(writer, index=False, sheet_name='IPRA vs ŚZP')
     products_ipra_not_szp.to_excel(writer, index=False, sheet_name='są w IPRA - nie w ŚZP')
-    #products_ipra_not_eo.to_excel(writer, index=False, sheet_name='są w IPRA - nie w EO')
-    #products_eo_not_ipra.to_excel(writer, index=False, sheet_name='są w EO - nie w IPRA')
-    #products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
+    products_ipra_not_eo.to_excel(writer, index=False, sheet_name='są w IPRA - nie w EO')
+    products_eo_not_ipra.to_excel(writer, index=False, sheet_name='są w EO - nie w IPRA')
+    products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
     products_szp_not_ipra.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w IPRA')
-    #products_szp_not_eo.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w EO')
+    products_szp_not_eo.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w EO')
     df.to_excel(writer, index=False, sheet_name='dane')
 
     # Pobranie workbooka i arkuszy
@@ -242,11 +242,11 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     worksheet2 = writer.sheets["porównanie rabatów"]
     worksheet3 = writer.sheets["IPRA vs ŚZP"]
     worksheet4 = writer.sheets["są w IPRA - nie w ŚZP"]
-    #worksheet5 = writer.sheets["są w IPRA - nie w EO"]
-    #worksheet6 = writer.sheets["są w EO - nie w IPRA"]
-    #worksheet7 = writer.sheets["są w EO - nie w ŚZP"]
+    worksheet5 = writer.sheets["są w IPRA - nie w EO"]
+    worksheet6 = writer.sheets["są w EO - nie w IPRA"]
+    worksheet7 = writer.sheets["są w EO - nie w ŚZP"]
     worksheet8 = writer.sheets["są w ŚZP - nie w IPRA"]
-    #worksheet9 = writer.sheets["są w ŚZP - nie w EO"]
+    worksheet9 = writer.sheets["są w ŚZP - nie w EO"]
 
     # 🎨 Ustawienie kolorów zakładek
     worksheet1.set_tab_color('#0000FF')  # 🔵 Niebieski dla "dane"
@@ -255,11 +255,11 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     
     pomaranczowy = '#FFA500'  # 🟠 Pomarańczowy dla arkuszy "są w ... - nie w ..."
     worksheet4.set_tab_color(pomaranczowy)
-    #worksheet5.set_tab_color(pomaranczowy)
-    #worksheet6.set_tab_color(pomaranczowy)
-    #worksheet7.set_tab_color(pomaranczowy)
+    worksheet5.set_tab_color(pomaranczowy)
+    worksheet6.set_tab_color(pomaranczowy)
+    worksheet7.set_tab_color(pomaranczowy)
     worksheet8.set_tab_color(pomaranczowy)
-    #worksheet9.set_tab_color(pomaranczowy)
+    worksheet9.set_tab_color(pomaranczowy)
 
     # 🎨 Definiowanie formatów kolorów dla rabatów
     green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony
@@ -305,7 +305,7 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     
     #for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
-    for ws in [worksheet2, worksheet3, worksheet4, worksheet8]:
+    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
         ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
         ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
 
