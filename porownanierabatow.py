@@ -193,40 +193,39 @@ products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id 
 # Możesz dodać dowolne kolumny, które chcesz w tej tabeli, np.:
 products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 products_ipra_not_szp = pd.merge(products_ipra_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_ipra_not_szp = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
-products_ipra_not_szp
-type(products_ipra_not_szp)
+products_ipra_not_szp = products_ipra_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+
 
 # Są w EO, nie ma w ŚZ/P
 df_eo = pivot_table2[pivot_table2["EO"].notna()]
 products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
 products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
 products_eo_not_szp = pd.merge(products_eo_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_eo_not_szp = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_eo_not_szp = products_eo_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 # Są w ŚZ/P, nie ma w IPRA
 products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])]
 products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 products_szp_not_ipra = pd.merge(products_szp_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_szp_not_ipra = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_szp_not_ipra = products_szp_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w ŚZ/P, nie ma w EO
 products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
 products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 products_szp_not_eo = pd.merge(products_szp_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_szp_not_eo = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_szp_not_eo = products_szp_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w IPRA, nie ma w EO
 products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])]
 products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 products_ipra_not_eo = pd.merge(products_ipra_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_ipra_not_eo = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+products_ipra_not_eo = products_ipra_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 # Są w EO, nie ma w IPRA
 products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])]
 products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
 products_eo_not_ipra = pd.merge(products_eo_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_eo_not_ipra = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_eo_not_ipra = products_eo_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 
 
