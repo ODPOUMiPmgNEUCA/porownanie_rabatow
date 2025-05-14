@@ -158,6 +158,10 @@ pivot_table1
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 pivot_table1 = pivot_table1[selected_columns]
+pivot_table1 = pd.merge(pivot_table1, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+pivot_table1
+
+
 
 # pivot_table1
 
