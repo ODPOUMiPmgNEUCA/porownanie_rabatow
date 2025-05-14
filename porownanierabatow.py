@@ -96,6 +96,9 @@ kolumny = [
 
 ]
 
+RKMH = pd.read_excel("RKMH.xlsx")
+RKMH
+
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
 
