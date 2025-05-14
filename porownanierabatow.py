@@ -128,6 +128,11 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 # Zaokrąglenie do 2 miejsc po przecinku (opcjonalnie)
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
 df = df[df["Rabat Promocyjny"] != 0]
+df = pd.merge(df, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+df = df[['Id Materiału', 'Nazwa Materiału','Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 'RKMH',
+    'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
+    'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
+    'Rabat Promocyjny','Rodzaj promocji']]
 
 
 
@@ -187,28 +192,40 @@ products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id 
 # Krok 3: Tworzymy tabelę z produktami, które są w IPRA, ale nie w ŚZ/P
 # Możesz dodać dowolne kolumny, które chcesz w tej tabeli, np.:
 products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+products_ipra_not_szp = pd.merge(products_ipra_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_ipra_not_szp = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 
 # Są w EO, nie ma w ŚZ/P
 df_eo = pivot_table2[pivot_table2["EO"].notna()]
 products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
 products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_eo_not_szp = pd.merge(products_eo_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_eo_not_szp = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 # Są w ŚZ/P, nie ma w IPRA
 products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])]
 products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_szp_not_ipra = pd.merge(products_szp_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_szp_not_ipra = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w ŚZ/P, nie ma w EO
 products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
 products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_szp_not_eo = pd.merge(products_szp_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_szp_not_eo = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w IPRA, nie ma w EO
 products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])]
 products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+products_ipra_not_eo = pd.merge(products_ipra_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_ipra_not_eo = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 # Są w EO, nie ma w IPRA
 products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])]
 products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_eo_not_ipra = pd.merge(products_eo_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+products_eo_not_ipra = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 
 
@@ -264,29 +281,29 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
 
     # Pobranie rozmiaru tabeli
     num_rows = len(pivot_table2)
-    rabat_range = f"D2:F{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
+    rabat_range = f"E2:G{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
 
     # Pobranie rozmiaru tabeli
     num_rows = len(pivot_table2)
-    rabat_range = f"D2:F{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
+    rabat_range = f"E2:G{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
 
     # Pobranie rozmiaru tabeli
     num_rows = len(pivot_table2)
-    rabat_range = f"D2:F{num_rows+1}"  # Zakres dla kolumn IPRA, EO, ŚZ/P
+    rabat_range = f"E2:G{num_rows+1}"  # Zakres dla kolumn IPRA, EO, ŚZ/P
     
     # Formatowanie: Najwyższy rabat → zielony
-    for col in ['D', 'E', 'F']:
+    for col in ['E', 'F', 'G']:
         worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
             'type': 'formula',
-            'criteria': f"={col}2=MAX($D2:$F2)",
+            'criteria': f"={col}2=MAX($E2:$G2)",
             'format': green_format
         })
     
     # Formatowanie: Najniższy rabat → czerwony
-    for col in ['D', 'E', 'F']:
+    for col in ['E', 'F', 'G']:
         worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
             'type': 'formula',
-            'criteria': f"={col}2=MIN(IF($D2:$F2<>\"\", $D2:$F2))",
+            'criteria': f"={col}2=MIN(IF($E2:$G2<>\"\", $E2:$G2))",
             'format': red_format
         })
     
@@ -301,8 +318,9 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     
     for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
-        ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
+        ws.set_column('D:D', max_length + 2)  # Kolumna C - Nazwa Materiału
         ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
+        ws.set_column('B:B', max_length1 + 2)  # Kolumna B - Nazwa producenta RKMH
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
