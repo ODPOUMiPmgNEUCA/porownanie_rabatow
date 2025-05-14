@@ -96,24 +96,22 @@ kolumny = [
 
 ]
 
-#print("Typ df:", type(df))
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
-#df
+
 # Czy dopuszcza rabat kontraktowy = 1 - tylko promocje WHA
 df = df[df["Czy dopuszcza rabat kontraktowy"] == 1]
-#df
+
 
 # Rodzaj promocji
 df["Rodzaj promocji"] = ""  # Inicjalizacja kolumny
 df.loc[df["Nr zlecenia"] == 61114, "Rodzaj promocji"] = "ŚZ/P"
 df.loc[df["Nazwa Promocji"].str.contains("ZGZ", na=False), "Rodzaj promocji"] = "ZGZ"
-df.loc[df["Nr zlecenia"] == 27001, "Rodzaj promocji"] = "centralne"
 df.loc[df["Nazwa Promocji"].str.contains("BKS", na=False), "Rodzaj promocji"] = "sieci"
+df.loc[df["Nr zlecenia"] == 27001, "Rodzaj promocji"] = "centralne"
 df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = "RPM"
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
 df.loc[df["Nazwa Promocji"].str.contains("RPM_HIT|RPM HIT", na=False, regex=True), "Rodzaj promocji"] = "EO"
-#df
 
 # Oczyszczanie kolumny 'Rabat Promocyjny'
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
@@ -128,7 +126,7 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
 df = df[df["Rabat Promocyjny"] != 0]
 
-#df
+
 
 # Sprawdzenie wartości po konwersji
 # st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
@@ -151,34 +149,20 @@ pivot_table = df1.pivot_table(
     aggfunc="max"
 )
 
-#pivot_table
 # Resetowanie indeksu dla lepszej czytelności
 pivot_table1 = pivot_table.reset_index()
 # Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
-#st.write("Kolumny w pivot_table1:", pivot_table1.columns.tolist())
-#st.write("Wybrane kolumny:", selected_columns)
-selected_columns = [col for col in selected_columns if col in pivot_table1.columns]
 pivot_table1 = pivot_table1[selected_columns]
 
-#pivot_table1
+# pivot_table1
 
 
 # Tylko IPRA, EO i ŚZ/P
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
-selected2 = [col for col in selected2 if col in pivot_table1.columns]
 pivot_table2 = pivot_table1[selected2]
-# Lista kolumn do sprawdzenia
-kolumny_do_sprawdzenia = ["IPRA", "EO", "ŚZ/P"]
+pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 
-# Filtruj tylko te, które faktycznie istnieją w DataFrame
-istniejace_kolumny = [col for col in kolumny_do_sprawdzenia if col in pivot_table2.columns]
-
-# Usuń wiersze, gdzie wszystkie z tych kolumn mają NaN
-if istniejace_kolumny:
-    pivot_table2 = pivot_table2.dropna(subset=istniejace_kolumny, how="all")
-#pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
-#pivot_table2
 
 
 # Są w IPRA, nie ma w ŚZ/P
@@ -304,7 +288,6 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
     max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     
-    #for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
     for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
         ws.set_column('C:C', max_length + 2)  # Kolumna C - Nazwa Materiału
         ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
@@ -340,4 +323,3 @@ st.markdown("""
 - **Arkusz 9 – dane**: Zawiera listę aktualnych promocji z datami obowiązywania po produktach z wysokością rabatu.
 
 """, unsafe_allow_html=True)
-
