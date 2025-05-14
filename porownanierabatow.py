@@ -178,7 +178,7 @@ pivot_table2 = pivot_table1[selected2]
 pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
 pivot_table2 = pd.merge(pivot_table2, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 pivot_table2 = pivot_table2[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]]
-pivot_table2
+#pivot_table2
 
 
 
