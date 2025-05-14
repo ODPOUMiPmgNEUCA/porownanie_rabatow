@@ -194,7 +194,7 @@ products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id 
 products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 products_ipra_not_szp = pd.merge(products_ipra_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 products_ipra_not_szp = [["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
-
+products_ipra_not_szp
 
 # Są w EO, nie ma w ŚZ/P
 df_eo = pivot_table2[pivot_table2["EO"].notna()]
