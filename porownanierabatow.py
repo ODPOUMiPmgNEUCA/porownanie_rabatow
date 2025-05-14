@@ -111,7 +111,7 @@ df.loc[df["Nr zlecenia"] == 27001, "Rodzaj promocji"] = "centralne"
 df.loc[df["Nazwa Promocji"].str.contains("BKS", na=False), "Rodzaj promocji"] = "sieci"
 df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = "RPM"
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
-df.loc[df["Nazwa Promocji"].str.contains("RPM_HIT|RPM HIT", na=False, regex=True), "Rodzaj promocji"] = "EO"
+df.loc[df["Nr zlecenia"].isin([23050, 23055]), "Rodzaj promocji"] = "EO"
 
 # Oczyszczanie kolumny 'Rabat Promocyjny'
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
