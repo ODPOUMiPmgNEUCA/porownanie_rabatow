@@ -21,11 +21,7 @@ import json
 import io
 import datetime
 
-
-
 st.set_page_config(page_title='Porównanie rabatów - IPRA vs P+', layout='wide')
-
-
 
 tabs_font_css = """
 <style>
@@ -50,7 +46,6 @@ st.markdown("""
     2.2. Folder pobierze się w formacie **.zip** (jak na obrazku poniżej - zip - ten zasuwak na folderze).
 """)
 
-
 st.image("potrzebne_fotki/zip.png")
 
 st.markdown("""
@@ -62,23 +57,11 @@ st.markdown("""
 st.markdown(""" """)
 st.image("potrzebne_fotki/rozpakowany_zip.png")
 
-
 st.markdown("""
 3. Przeciągnij plik RaportPromocyjny na szare pole poniżej.  
 4. Teraz trzeba chwilkę poczekać... plik się załaduje, a w prawym górnym rogu pojawi się ikonka ludzika oraz napis **RUNNING...** - to znaczy, że aplikacja myśli, dajmy jej chwilę :)
 5. Gdy wszystko przebiegnie zgodnie z planem i ludzik zakończy bieg, pojawi się przycisk **Pobierz porównanie rabatów**.
 """)
-
-
-
-
-
-
-
-
-
-
-
 
 df = st.file_uploader(
     label = "Wrzuć plik RaportPromocyjny"
@@ -93,18 +76,15 @@ kolumny = [
     'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
     'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
     'Rabat Promocyjny', 'Rabat kwotowy', 'Cena z cennika głównego'
-
 ]
 
 RKMH = pd.read_excel("RKMH.xlsx")
-#RKMH
 
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
 
 # Czy dopuszcza rabat kontraktowy = 1 - tylko promocje WHA
 df = df[df["Czy dopuszcza rabat kontraktowy"] == 1]
-
 
 # Rodzaj promocji
 df["Rodzaj promocji"] = ""  # Inicjalizacja kolumny
@@ -116,126 +96,126 @@ df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = 
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
 df.loc[df["Nr zlecenia"].isin([23050, 23055]), "Rodzaj promocji"] = "EO"
 
-
-
-# Oczyszczanie kolumny 'Rabat Promocyjny'
+# === OCZYSZCZANIE KOLUMNY 'Rabat Promocyjny' ===
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
-df = df[df["Rabat Promocyjny"] != 0]
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.replace(',', '.')  # Zastąp przecinki kropkami, jeśli są
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()  # Usuwanie białych znaków
-# Konwersja na typ numeryczny (float), w przypadku problemów, zamienia wartości na NaN
-df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'])
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].astype(str).str.replace(',', '.')
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()
+df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'], errors='coerce').fillna(0)
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs()
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
-# Zaokrąglenie do 2 miejsc po przecinku (opcjonalnie)
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
-df = df[df["Rabat Promocyjny"] != 0]
+
+# === OCZYSZCZANIE KOLUMNY 'Rabat kwotowy' ===
+df['Rabat kwotowy'] = df['Rabat kwotowy'].fillna(0)
+df['Rabat kwotowy'] = df['Rabat kwotowy'].astype(str).str.replace(',', '.')
+df['Rabat kwotowy'] = df['Rabat kwotowy'].str.strip()
+df['Rabat kwotowy'] = pd.to_numeric(df['Rabat kwotowy'], errors='coerce').fillna(0)
+df['Rabat kwotowy'] = df['Rabat kwotowy'].abs()
+df['Rabat kwotowy'] = df['Rabat kwotowy'].round(2)
+
+# Filtrowanie wierszy, gdzie przynajmniej jeden rabat jest większy od zera
+df = df[(df["Rabat Promocyjny"] != 0) | (df["Rabat kwotowy"] != 0)]
+
 df = pd.merge(df, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 df = df[['Id Materiału', 'Nazwa Materiału','Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 'RKMH',
     'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
     'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
-    'Rabat Promocyjny','Rodzaj promocji']]
+    'Rabat Promocyjny', 'Rabat kwotowy', 'Rodzaj promocji']]
 
 # ==============================================================================
 
-
-
-# Sprawdzenie wartości po konwersji
-# st.write("Typ danych w kolumnie 'Rabat Promocyjny':", df['Rabat Promocyjny'].dtype)
-
-# Sprawdzenie wartości po konwersji
-# st.write("Przykładowe wartości w 'Rabat Promocyjny':", df['Rabat Promocyjny'].head())
-
 df1 = df.copy()
-# Usunięcie spacji i zamiana pustych stringów na NaN
 df1 = df1.dropna(subset=["Rodzaj promocji"])
-df1["Rabat Promocyjny"] = pd.to_numeric(df1["Rabat Promocyjny"], errors="coerce")
 
-
-# widok z kolejnego arkusza
-# Tworzenie tabeli przestawnej
-pivot_table = df1.pivot_table(
+# === TWÓRCZOŚĆ TABELI PRZESTAWNEJ DLA RABATU PROCENTOWEGO ===
+pivot_table_proc = df1.pivot_table(
     index=["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału"], 
     columns="Rodzaj promocji", 
     values="Rabat Promocyjny", 
     aggfunc="max"
-)
+).reset_index()
 
-# Resetowanie indeksu dla lepszej czytelności
-pivot_table1 = pivot_table.reset_index()
-#pivot_table1
-# Wybór tylko konkretnych kolumn (np. "Promocja A" i "Promocja B")
+# === TWÓRCZOŚĆ TABELI PRZESTAWNEJ DLA RABATU KWOTOWEGO ===
+pivot_table_kwot = df1.pivot_table(
+    index=["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału"], 
+    columns="Rodzaj promocji", 
+    values="Rabat kwotowy", 
+    aggfunc="max"
+).reset_index()
+
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
-pivot_table1 = pivot_table1[selected_columns]
-pivot_table1 = pd.merge(pivot_table1, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-pivot_table1 = pivot_table1[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]]
-#pivot_table1
+
+# Dopasowanie kolumn i mapowanie RKMH dla obu tabel przestawnych
+# 1. Procentowa
+pivot_table_proc = pivot_table_proc[[col for col in selected_columns if col in pivot_table_proc.columns]]
+pivot_table_proc = pd.merge(pivot_table_proc, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+cols_order = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"] if c in pivot_table_proc.columns]
+pivot_table_proc = pivot_table_proc[cols_order]
+
+# 2. Kwotowa
+pivot_table_kwot = pivot_table_kwot[[col for col in selected_columns if col in pivot_table_kwot.columns]]
+pivot_table_kwot = pd.merge(pivot_table_kwot, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+pivot_table_kwot = pivot_table_kwot[cols_order]
 
 
-
-# pivot_table1
-
-
-# Tylko IPRA, EO i ŚZ/P
+# === SEKRETY ARKUSZA IPRA VS ŚZP (Dla rabatów procentowych) ===
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
-pivot_table2 = pivot_table1[selected2]
-pivot_table2 = pivot_table2.dropna(subset=["IPRA", "EO", "ŚZ/P"], how="all")
+pivot_table2 = pivot_table_proc[[col for col in selected2 if col in pivot_table_proc.columns]]
+pivot_table2 = pivot_table2.dropna(subset=[c for c in ["IPRA", "EO", "ŚZ/P"] if c in pivot_table2.columns], how="all")
 pivot_table2 = pd.merge(pivot_table2, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-pivot_table2 = pivot_table2[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]]
-#pivot_table2
+cols_order2 = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P"] if c in pivot_table2.columns]
+pivot_table2 = pivot_table2[cols_order2]
 
 
+# Logika "Są w... nie ma w..." bazująca na obecności w promocjach procentowych
+df_ipra = pivot_table2[pivot_table2["IPRA"].notna()] if "IPRA" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
+df_szp = pivot_table2[pivot_table2["ŚZ/P"].notna()] if "ŚZ/P" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
+df_eo = pivot_table2[pivot_table2["EO"].notna()] if "EO" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
 
 # Są w IPRA, nie ma w ŚZ/P
-# Krok 1: Wybieramy produkty, które są w "IPRA", ale nie ma ich w "ŚZ/P"
-df_ipra = pivot_table2[pivot_table2["IPRA"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "IPRA" jest wartość (nie NaN)
-df_szp = pivot_table2[pivot_table2["ŚZ/P"].notna()]  # Wybieramy tylko te wiersze, gdzie w kolumnie "ŚZ/P" jest wartość (nie NaN)
-# Krok 2: Usuwamy produkty z df_ipra, które występują w df_szp
-# Zakładając, że "Id Materiału" set difference na Id materiału
-products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id Materiału"])]
-# Krok 3: Tworzymy tabelę z produktami, które są w IPRA, ale nie w ŚZ/P
-# Możesz dodać dowolne kolumny, które chcesz w tej tabeli, np.:
-products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
-products_ipra_not_szp = pd.merge(products_ipra_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_ipra_not_szp = products_ipra_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
-
+products_in_ipra_not_in_szp = df_ipra[~df_ipra["Id Materiału"].isin(df_szp["Id Materiału"])] if not df_ipra.empty and not df_szp.empty else df_ipra
+products_ipra_not_szp = products_in_ipra_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]] if "IPRA" in products_in_ipra_not_in_szp.columns else pd.DataFrame()
+if not products_ipra_not_szp.empty:
+    products_ipra_not_szp = pd.merge(products_ipra_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_ipra_not_szp = products_ipra_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 # Są w EO, nie ma w ŚZ/P
-df_eo = pivot_table2[pivot_table2["EO"].notna()]
-products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])]
-products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
-products_eo_not_szp = pd.merge(products_eo_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_eo_not_szp = products_eo_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_in_eo_not_in_szp = df_eo[~df_eo["Id Materiału"].isin(df_szp["Id Materiału"])] if not df_eo.empty and not df_szp.empty else df_eo
+products_eo_not_szp = products_in_eo_not_in_szp[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]] if "EO" in products_in_eo_not_in_szp.columns else pd.DataFrame()
+if not products_eo_not_szp.empty:
+    products_eo_not_szp = pd.merge(products_eo_not_szp, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_eo_not_szp = products_eo_not_szp[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 # Są w ŚZ/P, nie ma w IPRA
-products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])]
-products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
-products_szp_not_ipra = pd.merge(products_szp_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_szp_not_ipra = products_szp_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_in_szp_not_in_ipra = df_szp[~df_szp["Id Materiału"].isin(df_ipra["Id Materiału"])] if not df_szp.empty and not df_ipra.empty else df_szp
+products_szp_not_ipra = products_in_szp_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]] if "ŚZ/P" in products_in_szp_not_in_ipra.columns else pd.DataFrame()
+if not products_szp_not_ipra.empty:
+    products_szp_not_ipra = pd.merge(products_szp_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_szp_not_ipra = products_szp_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w ŚZ/P, nie ma w EO
-products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])]
-products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
-products_szp_not_eo = pd.merge(products_szp_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_szp_not_eo = products_szp_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
+products_in_szp_not_in_eo = df_szp[~df_szp["Id Materiału"].isin(df_eo["Id Materiału"])] if not df_szp.empty and not df_eo.empty else df_szp
+products_szp_not_eo = products_in_szp_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]] if "ŚZ/P" in products_in_szp_not_in_eo.columns else pd.DataFrame()
+if not products_szp_not_eo.empty:
+    products_szp_not_eo = pd.merge(products_szp_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_szp_not_eo = products_szp_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "ŚZ/P"]]
 
 # Są w IPRA, nie ma w EO
-products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])]
-products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]]
-products_ipra_not_eo = pd.merge(products_ipra_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_ipra_not_eo = products_ipra_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
+products_in_ipra_not_in_eo = df_ipra[~df_ipra["Id Materiału"].isin(df_eo["Id Materiału"])] if not df_ipra.empty and not df_eo.empty else df_ipra
+products_ipra_not_eo = products_in_ipra_not_in_eo[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA"]] if "IPRA" in products_in_ipra_not_in_eo.columns else pd.DataFrame()
+if not products_ipra_not_eo.empty:
+    products_ipra_not_eo = pd.merge(products_ipra_not_eo, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_ipra_not_eo = products_ipra_not_eo[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "IPRA"]]
 
 # Są w EO, nie ma w IPRA
-products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])]
-products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]]
-products_eo_not_ipra = pd.merge(products_eo_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-products_eo_not_ipra = products_eo_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
+products_in_eo_not_in_ipra = df_eo[~df_eo["Id Materiału"].isin(df_ipra["Id Materiału"])] if not df_eo.empty and not df_ipra.empty else df_eo
+products_eo_not_ipra = products_in_eo_not_in_ipra[["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "EO"]] if "EO" in products_in_eo_not_in_ipra.columns else pd.DataFrame()
+if not products_eo_not_ipra.empty:
+    products_eo_not_ipra = pd.merge(products_eo_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+    products_eo_not_ipra = products_eo_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
 
-
-
-
-# Pobranie dzisiejszej daty w formacie YYYY-MM-DD
+# Pobranie dzisiejszej daty w formacie DD-MM-YYYY
 today = datetime.datetime.today().strftime('%d-%m-%Y')
 
 # Tworzenie pliku Excel w pamięci
@@ -243,61 +223,49 @@ excel_file1 = io.BytesIO()
 
 with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     # Zapisywanie arkuszy
-    pivot_table1.to_excel(writer, index=False, sheet_name='porównanie rabatów')
+    pivot_table_proc.to_excel(writer, index=False, sheet_name='porównanie rabatów')
+    pivot_table_kwot.to_excel(writer, index=False, sheet_name='porównanie rabatów kwotowych')
     pivot_table2.to_excel(writer, index=False, sheet_name='IPRA vs ŚZP')
-    products_ipra_not_szp.to_excel(writer, index=False, sheet_name='są w IPRA - nie w ŚZP')
-    products_ipra_not_eo.to_excel(writer, index=False, sheet_name='są w IPRA - nie w EO')
-    products_eo_not_ipra.to_excel(writer, index=False, sheet_name='są w EO - nie w IPRA')
-    products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
-    products_szp_not_ipra.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w IPRA')
-    products_szp_not_eo.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w EO')
+    
+    if not products_ipra_not_szp.empty: products_ipra_not_szp.to_excel(writer, index=False, sheet_name='są w IPRA - nie w ŚZP')
+    if not products_ipra_not_eo.empty: products_ipra_not_eo.to_excel(writer, index=False, sheet_name='są w IPRA - nie w EO')
+    if not products_eo_not_ipra.empty: products_eo_not_ipra.to_excel(writer, index=False, sheet_name='są w EO - nie w IPRA')
+    if not products_eo_not_szp.empty: products_eo_not_szp.to_excel(writer, index=False, sheet_name='są w EO - nie w ŚZP')
+    if not products_szp_not_ipra.empty: products_szp_not_ipra.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w IPRA')
+    if not products_szp_not_eo.empty: products_szp_not_eo.to_excel(writer, index=False, sheet_name='są w ŚZP - nie w EO')
+    
     df.to_excel(writer, index=False, sheet_name='dane')
 
     # Pobranie workbooka i arkuszy
     workbook = writer.book
-    worksheet1 = writer.sheets["dane"]
-    worksheet2 = writer.sheets["porównanie rabatów"]
-    worksheet3 = writer.sheets["IPRA vs ŚZP"]
-    worksheet4 = writer.sheets["są w IPRA - nie w ŚZP"]
-    worksheet5 = writer.sheets["są w IPRA - nie w EO"]
-    worksheet6 = writer.sheets["są w EO - nie w IPRA"]
-    worksheet7 = writer.sheets["są w EO - nie w ŚZP"]
-    worksheet8 = writer.sheets["są w ŚZP - nie w IPRA"]
-    worksheet9 = writer.sheets["są w ŚZP - nie w EO"]
+    worksheet_dane = writer.sheets["dane"]
+    worksheet_rab_proc = writer.sheets["porównanie rabatów"]
+    worksheet_rab_kwot = writer.sheets["porównanie rabatów kwotowych"]
+    worksheet_vs = writer.sheets["IPRA vs ŚZP"]
 
     # 🎨 Ustawienie kolorów zakładek
-    worksheet1.set_tab_color('#0000FF')  # 🔵 Niebieski dla "dane"
-    worksheet2.set_tab_color('#008000')  # 🟢 Zielony dla "porównanie rabatów"
-    worksheet3.set_tab_color('#008000')  # 🟢 Zielony dla "IPRA vs ŚZP"
+    worksheet_dane.set_tab_color('#0000FF')    # 🔵 Niebieski dla "dane"
+    worksheet_rab_proc.set_tab_color('#008000') # 🟢 Zielony dla "porównanie rabatów"
+    worksheet_rab_kwot.set_tab_color('#008000') # 🟢 Zielony dla "porównanie rabatów kwotowych"
+    worksheet_vs.set_tab_color('#008000')       # 🟢 Zielony dla "IPRA vs ŚZP"
     
     pomaranczowy = '#FFA500'  # 🟠 Pomarańczowy dla arkuszy "są w ... - nie w ..."
-    worksheet4.set_tab_color(pomaranczowy)
-    worksheet5.set_tab_color(pomaranczowy)
-    worksheet6.set_tab_color(pomaranczowy)
-    worksheet7.set_tab_color(pomaranczowy)
-    worksheet8.set_tab_color(pomaranczowy)
-    worksheet9.set_tab_color(pomaranczowy)
+    for name, sheet in writer.sheets.items():
+        if "są w" in name:
+            sheet.set_tab_color(pomaranczowy)
 
     # 🎨 Definiowanie formatów kolorów dla rabatów
     green_format = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'})  # Zielony
     red_format = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'})  # Czerwony
     orange_format = workbook.add_format({'bg_color': '#FFA500', 'font_color': '#000000'})  # Pomarańczowy
 
-    # Pobranie rozmiaru tabeli
+    # Formatowanie warunkowe dla arkusza IPRA vs ŚZP
     num_rows = len(pivot_table2)
-    rabat_range = f"E2:G{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
-
-    # Pobranie rozmiaru tabeli
-    num_rows = len(pivot_table2)
-    rabat_range = f"E2:G{num_rows+1}"  # Kolumny D, E, F (IPRA, EO, ŚZ/P)
-
-    # Pobranie rozmiaru tabeli
-    num_rows = len(pivot_table2)
-    rabat_range = f"E2:G{num_rows+1}"  # Zakres dla kolumn IPRA, EO, ŚZ/P
+    rabat_range = f"E2:G{num_rows+1}" 
     
     # Formatowanie: Najwyższy rabat → zielony
     for col in ['E', 'F', 'G']:
-        worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
+        worksheet_vs.conditional_format(f"{col}2:{col}{num_rows+1}", {
             'type': 'formula',
             'criteria': f"={col}2=MAX($E2:$G2)",
             'format': green_format
@@ -305,26 +273,27 @@ with pd.ExcelWriter(excel_file1, engine='xlsxwriter') as writer:
     
     # Formatowanie: Najniższy rabat → czerwony
     for col in ['E', 'F', 'G']:
-        worksheet3.conditional_format(f"{col}2:{col}{num_rows+1}", {
+        worksheet_vs.conditional_format(f"{col}2:{col}{num_rows+1}", {
             'type': 'formula',
             'criteria': f"={col}2=MIN(IF($E2:$G2<>\"\", $E2:$G2))",
             'format': red_format
         })
     
     # Formatowanie: Brak rabatu → pomarańczowy
-    worksheet3.conditional_format(rabat_range, {
+    worksheet_vs.conditional_format(rabat_range, {
         'type': 'blanks',
         'format': orange_format
     })
 
-    # 📏 Ustawienie szerokości kolumn
-    max_length = pivot_table1['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
-    max_length1 = pivot_table1['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
+    # 📏 Ustawienie szerokości kolumn (dynamicznie dla nazwy materiału i producenta)
+    max_length = pivot_table_proc['Nazwa Materiału'].apply(lambda x: len(str(x))).max()
+    max_length1 = pivot_table_proc['Nazwa producenta sprzedażowego'].apply(lambda x: len(str(x))).max()
     
-    for ws in [worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9]:
-        ws.set_column('D:D', max_length + 2)  # Kolumna C - Nazwa Materiału
-        ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
-        ws.set_column('B:B', max_length1 + 2)  # Kolumna B - Nazwa producenta RKMH
+    for name, ws in writer.sheets.items():
+        if name != 'dane':
+            ws.set_column('D:D', max_length + 2)   # Kolumna D - Nazwa Materiału
+            ws.set_column('A:A', max_length1 + 2)  # Kolumna A - Nazwa producenta sprzedażowego
+            ws.set_column('B:B', max_length1 + 2)  # Kolumna B - Nazwa producenta RKMH
 
 # Resetowanie wskaźnika do początku pliku
 excel_file1.seek(0)
@@ -337,23 +306,18 @@ st.download_button(
     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 )
 
-# st.write(f"Zakres formatowania: {rabat_range}")
 st.markdown("""
 ### 🔹 Legenda kolorów arkuszy:
-- 🟢 **Zielony** – porównanie rabatów w zależności od rodzaju promocji.
+- 🟢 **Zielony** – porównanie rabatów (procentowych i kwotowych) w zależności od rodzaju promocji.
 - 🟠 **Pomarańczowe** – arkusze przedstawiające listę produktów, które w jednym programie są w promocji, a w innym nie.
 - 🔵 **Niebieski** – najważniejsze dane z pliku RaportPromocyjny.
 
 
 ### 📂 Opis arkuszy:
-- **Arkusz 1 – porównanie rabatów**: Zestawione wartości rabatu w zależności od rodzaju promocji (IPRA, EO, ŚZ/P, RPM, ZGZ, sieci, promocje centralne).
-- **Arkusz 2 – IPRA vs ŚZP**: Porównanie wysyokości rabatu dla IPRA, EO i Świata Zdrowia/Partnera z zaznaczonymi kolorystycznie wysokościami rabatu (zielony - rabat najwyższy, czerwony - rabat najniższy, pomarańczowy - brak rabatu).
-- **Arkusz 3 – są w IPRA - nie w ŚZP**: Zestawienie produktów, które aktualnie są w promocjach IPRA, nie ma w Świecie Zdrowia/Partnerze.
-- **Arkusz 4 – są w IPRA - nie w EO**: Zestawienie produktów, które aktualnie są w promocjach IPRA, nie ma w EO.
-- **Arkusz 5 – są w EO - nie w IPRA**: Zestawienie produktów, które aktualnie są w promocjach EO, nie ma w IPRA.
-- **Arkusz 6 – są w EO - nie w ŚZP**: Zestawienie produktów, które aktualnie są w promocjach EO, nie ma w Świecie Zdrowia/Partnerze.
-- **Arkusz 7 – są w ŚZP - nie w IPRA**: Zestawienie produktów, które aktualnie są w promocjach Świata Zdrowia/Partnera, nie ma w IPRA.
-- **Arkusz 8 – są w ŚZP - nie w EO**: Zestawienie produktów, które aktualnie są w promocjach Świata Zdrowia/Partnera, nie ma w EO.
-- **Arkusz 9 – dane**: Zawiera listę aktualnych promocji z datami obowiązywania po produktach z wysokością rabatu.
+- **Arkusz 1 – porównanie rabatów**: Zestawione maksymalne wartości rabatu **procentowego** w zależności od rodzaju promocji.
+- **Arkusz 2 – porównanie rabatów kwotowych**: Zestawione maksymalne wartości rabatu **kwotowego** w zależności od rodzaju promocji.
+- **Arkusz 3 – IPRA vs ŚZP**: Porównanie wysokości rabatu dla IPRA, EO i Świata Zdrowia/Partnera z zaznaczonymi kolorystycznie wysokościami rabatu.
+- **Arkusz 4 do 9 – Arkusze "są w ... nie w ..."**: Zestawienia braków asortymentowych w promocjach pomiędzy programami.
+- **Arkusz 10 – dane**: Zawiera oczyszczoną listę aktualnych promocji z pliku wejściowego (zawiera zarówno rabat procentowy, jak i kwotowy).
 
 """, unsafe_allow_html=True)
