@@ -92,7 +92,7 @@ kolumny = [
     'Id Materiału', 'Nazwa Materiału','Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 
     'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
     'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
-    'Rabat Promocyjny'
+    'Rabat Promocyjny', 'Rabat kwotowy', 'Cena z cennika głównego'
 
 ]
 
@@ -116,23 +116,55 @@ df.loc[df["Nazwa Promocji"].str.contains("RPM", na=False), "Rodzaj promocji"] = 
 df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] = "IPRA"
 df.loc[df["Nr zlecenia"].isin([23050, 23055]), "Rodzaj promocji"] = "EO"
 
-# Oczyszczanie kolumny 'Rabat Promocyjny'
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
+
+
+# ==============================================================================
+# NOWE NOWOCZESNE OCZYSZCZANIE I SPRAWADZANIE RABATÓW (% ORAZ ZŁ) DO JEDNEJ POSTACI
+# ==============================================================================
+
+
+# Oczyszczanie kolumn numerycznych z formatowania tekstowego (przecinki na kropki)
+for col in ['Rabat Promocyjny', 'Rabat kwotowy', 'Cena z cennika głównego']:
+    df[col] = df[col].fillna(0)
+    df[col] = df[col].astype(str).str.replace(',', '.')
+    df[col] = df[col].str.strip()
+    df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
+# Konwersja oryginalnego Rabatu Promocyjnego na ułamek (np. 15 -> 0.15)
+df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs() / 100
+
+# Obliczanie procentowej wartości z rabatu kwotowego (tylko gdy cena > 0)
+df['Rabat kwotowy_procentowy'] = np.where(
+    df['Cena z cennika głównego'] > 0,
+    (df['Rabat kwotowy'] / df['Cena z cennika głównego']).round(4),
+    0
+)
+
+# Główna logika wykluczania: 
+# Jeśli 'Rabat Promocyjny' wynosi 0, przypisz obliczony procent z kwotowego. 
+# W przeciwnym razie zostaw dotychczasowy 'Rabat Promocyjny'.
+df['Rabat Promocyjny'] = np.where(
+    df['Rabat Promocyjny'] == 0,
+    df['Rabat kwotowy_procentowy'],
+    df['Rabat Promocyjny']
+)
+
+# Filtrujemy wiersze, gdzie ostateczny rabat (po obu przekształceniach) jest większy od zera
 df = df[df["Rabat Promocyjny"] != 0]
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.replace(',', '.')  # Zastąp przecinki kropkami, jeśli są
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()  # Usuwanie białych znaków
-# Konwersja na typ numeryczny (float), w przypadku problemów, zamienia wartości na NaN
-df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'])
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs()
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
-# Zaokrąglenie do 2 miejsc po przecinku (opcjonalnie)
+
+# Zaokrąglenie do 4 miejsc po przecinku dla pewności
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
-df = df[df["Rabat Promocyjny"] != 0]
+
+# Łączenie z bazą RKMH
 df = pd.merge(df, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-df = df[['Id Materiału', 'Nazwa Materiału','Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 'RKMH',
-    'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
+
+# Ostateczny wybór kolumn (struktura nienaruszona dla reszty Twojego programu)
+df = df[['Id Materiału', 'Nazwa Materiału', 'Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 'RKMH',
+    'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od', 'Data obowiązywania promocji do',  
     'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
-    'Rabat Promocyjny','Rodzaj promocji']]
+    'Rabat Promocyjny', 'Rodzaj promocji']]
+
+# ==============================================================================
 
 
 
