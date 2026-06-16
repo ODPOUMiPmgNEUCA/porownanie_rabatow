@@ -136,7 +136,7 @@ df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs() / 100
 # Obliczanie procentowej wartości z rabatu kwotowego (tylko gdy cena > 0)
 df['Rabat kwotowy_procentowy'] = np.where(
     df['Cena z cennika głównego'] > 0,
-    (df['Rabat kwotowy'] / df['Cena z cennika głównego']).round(4),
+    (df['Rabat kwotowy'] / df['Cena z cennika głównego']).round(4).abs(),
     0
 )
 
