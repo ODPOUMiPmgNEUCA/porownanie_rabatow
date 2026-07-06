@@ -97,30 +97,32 @@ df.loc[df["Nazwa Promocji"].str.contains("IPRA", na=False), "Rodzaj promocji"] =
 df.loc[df["Nr zlecenia"].isin([23050, 23055]), "Rodzaj promocji"] = "EO"
 
 # === OCZYSZCZANIE KOLUMNY 'Rabat Promocyjny' ===
-df['Rabat Promocyjny'] = df['Rabat Promocyjny'].fillna(0)
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].astype(str).str.replace(',', '.')
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].str.strip()
-df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'], errors='coerce').fillna(0)
+df['Rabat Promocyjny'] = pd.to_numeric(df['Rabat Promocyjny'], errors='coerce')
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].abs()
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'] / 100
 df['Rabat Promocyjny'] = df['Rabat Promocyjny'].round(4)
+# Zamiana ewentualnych zer na NaN, żeby nie psuły tabel przestawnych
+df.loc[df['Rabat Promocyjny'] == 0, 'Rabat Promocyjny'] = np.nan
 
 # === OCZYSZCZANIE KOLUMNY 'Rabat kwotowy' ===
-df['Rabat kwotowy'] = df['Rabat kwotowy'].fillna(0)
 df['Rabat kwotowy'] = df['Rabat kwotowy'].astype(str).str.replace(',', '.')
 df['Rabat kwotowy'] = df['Rabat kwotowy'].str.strip()
-df['Rabat kwotowy'] = pd.to_numeric(df['Rabat kwotowy'], errors='coerce').fillna(0)
+df['Rabat kwotowy'] = pd.to_numeric(df['Rabat kwotowy'], errors='coerce')
 df['Rabat kwotowy'] = df['Rabat kwotowy'].abs()
 df['Rabat kwotowy'] = df['Rabat kwotowy'].round(2)
+# Zamiana ewentualnych zer na NaN
+df.loc[df['Rabat kwotowy'] == 0, 'Rabat kwotowy'] = np.nan
 
-# Filtrowanie wierszy, gdzie przynajmniej jeden rabat jest większy od zera
-df = df[(df["Rabat Promocyjny"] != 0) | (df["Rabat kwotowy"] != 0)]
+# Filtrowanie wierszy, gdzie przynajmniej jeden rabat ma jakąkolwiek wartość (nie jest NaN)
+df = df[df["Rabat Promocyjny"].notna() | df["Rabat kwotowy"].notna()]
 
 df = pd.merge(df, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 df = df[['Id Materiału', 'Nazwa Materiału','Nr producenta sprzedażowego', 'Nazwa producenta sprzedażowego', 'RKMH',
-    'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
-    'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
-    'Rabat Promocyjny', 'Rabat kwotowy', 'Rodzaj promocji']]
+         'identyfikator promocji', 'Nazwa Promocji', 'Nr zlecenia', 'Data obowiązywania promocji od','Data obowiązywania promocji do',  
+         'Skład (SPR,SGL)', 'Czy dopuszcza rabat kontraktowy','Rodzaj warunku płatności',
+         'Rabat Promocyjny', 'Rabat kwotowy', 'Rodzaj promocji']]
 
 # ==============================================================================
 
@@ -128,6 +130,7 @@ df1 = df.copy()
 df1 = df1.dropna(subset=["Rodzaj promocji"])
 
 # === TWÓRCZOŚĆ TABELI PRZESTAWNEJ DLA RABATU PROCENTOWEGO ===
+# pandas domyślnie zostawi puste komórki jako NaN (w Excelu będą puste)
 pivot_table_proc = df1.pivot_table(
     index=["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału"], 
     columns="Rodzaj promocji", 
@@ -146,13 +149,11 @@ pivot_table_kwot = df1.pivot_table(
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 
 # Dopasowanie kolumn i mapowanie RKMH dla obu tabel przestawnych
-# 1. Procentowa
 pivot_table_proc = pivot_table_proc[[col for col in selected_columns if col in pivot_table_proc.columns]]
 pivot_table_proc = pd.merge(pivot_table_proc, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 cols_order = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"] if c in pivot_table_proc.columns]
 pivot_table_proc = pivot_table_proc[cols_order]
 
-# 2. Kwotowa
 pivot_table_kwot = pivot_table_kwot[[col for col in selected_columns if col in pivot_table_kwot.columns]]
 pivot_table_kwot = pd.merge(pivot_table_kwot, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
 pivot_table_kwot = pivot_table_kwot[cols_order]
@@ -160,14 +161,13 @@ pivot_table_kwot = pivot_table_kwot[cols_order]
 
 # === SEKRETY ARKUSZA IPRA VS ŚZP (Dla rabatów procentowych) ===
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
-pivot_table2 = pivot_table_proc[[col for col in selected2 if col in pivot_table_proc.columns]]
+pivot_table2 = pivot_table_proc[[col for col in selected2 if col in pivot_table_proc.columns]].copy()
+# Filtrujemy wiersze, gdzie istnieje przynajmniej jeden realny rabat (niebędący NaN)
 pivot_table2 = pivot_table2.dropna(subset=[c for c in ["IPRA", "EO", "ŚZ/P"] if c in pivot_table2.columns], how="all")
-pivot_table2 = pd.merge(pivot_table2, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-cols_order2 = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P"] if c in pivot_table2.columns]
-pivot_table2 = pivot_table2[cols_order2]
 
 
-# Logika "Są w... nie ma w..." bazująca na obecności w promocjach procentowych
+# Logika "Są w... nie ma w..." bazująca na obecności (notna / isna)
+# Dzięki temu, że puste miejsca to NaN, warunki .notna() i .isna() zadziałają idealnie bez zakłóceń przez zera.
 df_ipra = pivot_table2[pivot_table2["IPRA"].notna()] if "IPRA" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
 df_szp = pivot_table2[pivot_table2["ŚZ/P"].notna()] if "ŚZ/P" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
 df_eo = pivot_table2[pivot_table2["EO"].notna()] if "EO" in pivot_table2.columns else pd.DataFrame(columns=pivot_table2.columns)
@@ -214,6 +214,10 @@ if not products_eo_not_ipra.empty:
     products_eo_not_ipra = pd.merge(products_eo_not_ipra, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
     products_eo_not_ipra = products_eo_not_ipra[["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału", "EO"]]
 
+# Ponowne połączenie z RKMH na koniec dla poprawnego widoku tabeli głównej IPRA vs ŚZP
+pivot_table2 = pd.merge(pivot_table2, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
+cols_order2 = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P"] if c in pivot_table2.columns]
+pivot_table2 = pivot_table2[cols_order2]
 
 # Pobranie dzisiejszej daty w formacie DD-MM-YYYY
 today = datetime.datetime.today().strftime('%d-%m-%Y')
