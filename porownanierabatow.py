@@ -148,16 +148,19 @@ pivot_table_kwot = df1.pivot_table(
 
 selected_columns = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"]
 
-# Dopasowanie kolumn i mapowanie RKMH dla obu tabel przestawnych
+# 1. Procentowa - dopasowanie i własna kolejność kolumn
 pivot_table_proc = pivot_table_proc[[col for col in selected_columns if col in pivot_table_proc.columns]]
 pivot_table_proc = pd.merge(pivot_table_proc, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-cols_order = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"] if c in pivot_table_proc.columns]
-pivot_table_proc = pivot_table_proc[cols_order]
 
+cols_order_proc = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"] if c in pivot_table_proc.columns]
+pivot_table_proc = pivot_table_proc[cols_order_proc]
+
+# 2. Kwotowa - dopasowanie i OSOBNA kolejność kolumn (zabezpieczenie przed KeyError)
 pivot_table_kwot = pivot_table_kwot[[col for col in selected_columns if col in pivot_table_kwot.columns]]
 pivot_table_kwot = pd.merge(pivot_table_kwot, RKMH[['Nazwa producenta sprzedażowego', 'RKMH']], on='Nazwa producenta sprzedażowego', how='left')
-pivot_table_kwot = pivot_table_kwot[cols_order]
 
+cols_order_kwot = ["Nazwa producenta sprzedażowego", "RKMH", "Id Materiału", "Nazwa Materiału"] + [c for c in ["IPRA", "EO", "ŚZ/P", "RPM", "ZGZ", "sieci", "centralne"] if c in pivot_table_kwot.columns]
+pivot_table_kwot = pivot_table_kwot[cols_order_kwot]
 
 # === SEKRETY ARKUSZA IPRA VS ŚZP (Dla rabatów procentowych) ===
 selected2 = ["Nazwa producenta sprzedażowego", "Id Materiału", "Nazwa Materiału", "IPRA", "EO", "ŚZ/P"]
