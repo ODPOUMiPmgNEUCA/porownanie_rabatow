@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1bfU5lwdNa2GOPWmQ9-URaf30VnlBzQC0
 """
 
- import os
+import os
 
 import openpyxl
 
