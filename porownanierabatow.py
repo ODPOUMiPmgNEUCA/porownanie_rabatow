@@ -66,9 +66,11 @@ st.markdown("""
 df = st.file_uploader(
     label = "Wrzuć plik RaportPromocyjny"
 )
-if df:
+
+if df_file is not None:
     df = pd.read_csv(df, sep=';')
     st.write(df.head())
+    RKMH = pd.read_excel("RKMH.xlsx")
 
 # Wybieranie tylko określonych kolumn z DataFrame
 kolumny = [
@@ -78,7 +80,7 @@ kolumny = [
     'Rabat Promocyjny', 'Rabat kwotowy', 'Cena z cennika głównego'
 ]
 
-RKMH = pd.read_excel("RKMH.xlsx")
+
 
 # Filtruj kolumny w DataFrame
 df = df[kolumny]
